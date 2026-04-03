@@ -1,0 +1,360 @@
+.layout {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  background: #DBEAFE;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 80px 64px 80px;
+  min-height: 0;
+}
+
+.heroUnit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  max-width: 780px;
+  width: 100%;
+  animation: fadeUp 0.4s 0.1s both ease;
+}
+
+.heroLogo {
+  text-align: center;
+  margin-bottom: 36px;
+  animation: fadeUp 0.4s 0.05s both ease;
+}
+
+.heroLogoSvg {
+  opacity: 0.18;
+  color: var(--navy);
+}
+
+.eyebrow {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 6px;
+}
+
+.headline {
+  font-family: var(--font-display);
+  font-size: clamp(52px, 5.5vw, 72px);
+  line-height: 1.05;
+  letter-spacing: 0;
+  color: var(--navy);
+  text-align: center;
+  margin: 0;
+}
+
+.headline em {
+  font-style: normal;
+  color: var(--navy);
+}
+
+.h2 {
+  font-family: var(--font-body);
+  font-size: clamp(31px, 3.3vw, 43px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--navy);
+  text-align: center;
+  margin: 0 0 8px;
+  line-height: 1.2;
+}
+
+.h3 {
+  font-family: var(--font-body);
+  font-size: clamp(21px, 2.2vw, 29px);
+  font-weight: 400;
+  color: var(--navy);
+  text-align: center;
+  margin: 0 0 28px;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.subhead {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--navy);
+  margin-bottom: 6px;
+  width: 100%;
+  text-align: right;
+  padding-right: 24px;
+}
+
+/* ── CHAT INPUT ── */
+.chatWrap {
+  width: 100%;
+  margin-top: -8px;
+}
+
+.inputRow {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.inputWrap {
+  position: relative;
+  width: 100%;
+}
+
+.textarea {
+  width: 100%;
+  padding: 28px 70px 28px 24px;
+  border: 1.5px solid var(--gray-200);
+  border-radius: 16px;
+  font-family: var(--font-body);
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--black);
+  background: var(--white);
+  outline: none;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  resize: none;
+  vertical-align: top;
+}
+
+.textarea::placeholder {
+  color: #6B7280;
+}
+
+.textarea:focus {
+  border-color: var(--navy);
+  box-shadow: 0 4px 24px rgba(27,42,74,0.12);
+}
+
+.sendBtn {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--navy);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, transform 0.15s;
+}
+
+.sendBtn:hover {
+  background: var(--green);
+  transform: translateY(calc(-50% - 2px));
+}
+
+.sendBtn:active {
+  opacity: 0.85;
+}
+
+/* ── PILLS ── */
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+}
+
+.pill {
+  padding: 10px 20px;
+  background: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  border-radius: 24px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gray-700);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.pill:hover {
+  background: var(--green);
+  border-color: var(--green);
+  color: #FFFFFF;
+  transform: translateY(-1px);
+}
+
+/* ── FOOTER ── */
+.footer {
+  background: #111d33;
+  padding: 48px 56px 0;
+}
+
+.footerGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 48px;
+  padding-bottom: 40px;
+  align-items: start;
+}
+
+.footerLeft {}
+
+.footerLogoWrap {
+  margin-bottom: 32px;
+}
+
+.footerLogoSvg {
+  color: #FFFFFF;
+  filter: invert(1);
+  opacity: 1;
+}
+
+.footerHeadline {
+  font-family: var(--font-display);
+  font-size: 36px;
+  line-height: 1;
+  color: var(--white);
+  margin-bottom: 14px;
+}
+
+.footerHeadlineGreen {
+  color: var(--green);
+}
+
+.footerTagline {
+  font-size: 14px;
+  color: rgba(255,255,255,0.65);
+  font-weight: 300;
+  line-height: 1.7;
+  margin-bottom: 28px;
+  max-width: 340px;
+}
+
+.footerPrivacy {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
+.footerSocial {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 28px;
+  margin-bottom: 32px;
+}
+
+.footerSocialLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.08);
+  transition: background 0.15s;
+  text-decoration: none;
+}
+
+.footerSocialLink:hover {
+  background: rgba(255,255,255,0.16);
+}
+
+.footerNav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.footerNavLabel {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 8px;
+  margin-top: 20px;
+}
+
+.footerNavLabel:first-child {
+  margin-top: 0;
+}
+
+.footerNavLink {
+  font-size: 14px;
+  color: rgba(255,255,255,0.7);
+  font-weight: 400;
+  text-decoration: none;
+  transition: color 0.15s;
+  line-height: 1.8;
+}
+
+.footerNavLink:hover {
+  color: var(--white);
+}
+
+.footerChatbotCallout {
+  background: rgba(125,143,60,0.12);
+  border: 1px solid rgba(125,143,60,0.25);
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 20px;
+}
+
+.footerChatbotCallout p {
+  font-size: 13px;
+  color: rgba(255,255,255,0.6);
+  line-height: 1.65;
+  margin-bottom: 10px;
+}
+
+.footerChatbotCallout a {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--green);
+  text-decoration: none;
+}
+
+.footerBottom {
+  border-top: 1px solid rgba(255,255,255,0.07);
+  padding: 20px 0 24px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.footerLegal {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.footerLegal a {
+  font-size: 11px;
+  color: rgba(255,255,255,0.35);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.footerLegal a:hover {
+  color: rgba(255,255,255,0.7);
+}
+
+.footerCopy {
+  font-size: 11px;
+  color: rgba(255,255,255,0.35);
+}
