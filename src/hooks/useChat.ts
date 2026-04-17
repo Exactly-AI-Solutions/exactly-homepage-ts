@@ -55,6 +55,8 @@ export function useChat(): ChatState & ChatActions {
 
       let botMessageAdded = false;
       const showCalendly = hasSchedulingIntent(text);
+      const isQuickWin = newContext === 'quick-wins';
+      let bufferedText = '';
 
       fetch('/api/chat', {
         method: 'POST',
@@ -82,6 +84,31 @@ export function useChat(): ChatState & ChatActions {
               if (!line.startsWith('data: ')) continue;
               const data = line.slice(6).trim();
               if (data === '[DONE]') {
+                if (isQuickWin) {
+                  const splitMatch = bufferedText.match(/^([\s\S]*?)(\s*# [\s\S]*)$/);
+                  if (splitMatch && splitMatch[1].trim()) {
+                    const preamble = splitMatch[1].trim();
+                    const quickwinContent = splitMatch[2].trim();
+                    setState((prev) => ({
+                      ...prev,
+                      isTyping: false,
+                      messages: [
+                        ...prev.messages,
+                        { id: botId, role: 'bot' as const, text: preamble },
+                        { id: uid(), role: 'bot' as const, text: quickwinContent, displayFormat: 'quickwin-accordion' as const },
+                      ],
+                    }));
+                  } else {
+                    setState((prev) => ({
+                      ...prev,
+                      isTyping: false,
+                      messages: [
+                        ...prev.messages,
+                        { id: botId, role: 'bot' as const, text: bufferedText, displayFormat: 'quickwin-accordion' as const },
+                      ],
+                    }));
+                  }
+                }
                 if (showCalendly) {
                   setState((prev) => ({
                     ...prev,
@@ -99,25 +126,22 @@ export function useChat(): ChatState & ChatActions {
                 if (parsed.error) throw new Error(parsed.error);
 
                 if (parsed.text) {
-                  if (!botMessageAdded) {
+                  if (isQuickWin) {
+                    // Buffer silently — render complete markdown on [DONE]
+                    bufferedText += parsed.text;
+                  } else if (!botMessageAdded) {
                     // First chunk: add bot message and stop typing indicator
                     botMessageAdded = true;
-                    const isQuickWin = newContext === 'quick-wins';
                     setState((prev) => ({
                       ...prev,
                       isTyping: false,
                       messages: [
                         ...prev.messages,
-                        {
-                          id: botId,
-                          role: 'bot',
-                          text: parsed.text!,
-                          ...(isQuickWin ? { displayFormat: 'quickwin-accordion' as const } : {}),
-                        },
+                        { id: botId, role: 'bot', text: parsed.text! },
                       ],
                     }));
                   } else {
-                    // Subsequent chunks: append text to existing bot message
+                    // Subsequent chunks: append to existing bot message
                     setState((prev) => ({
                       ...prev,
                       messages: prev.messages.map((m) =>
@@ -133,7 +157,7 @@ export function useChat(): ChatState & ChatActions {
           }
         })
         .catch(() => {
-          if (!botMessageAdded) {
+          if (!botMessageAdded && !isQuickWin) {
             setState((prev) => ({
               ...prev,
               isTyping: false,
@@ -144,6 +168,24 @@ export function useChat(): ChatState & ChatActions {
                   role: 'bot',
                   text: 'Sorry, something went wrong. Please try again.',
                 },
+              ],
+            }));
+          } else if (isQuickWin && bufferedText) {
+            setState((prev) => ({
+              ...prev,
+              isTyping: false,
+              messages: [
+                ...prev.messages,
+                { id: botId, role: 'bot', text: bufferedText + '\n\n[Connection lost. Please try again.]' },
+              ],
+            }));
+          } else if (isQuickWin) {
+            setState((prev) => ({
+              ...prev,
+              isTyping: false,
+              messages: [
+                ...prev.messages,
+                { id: botId, role: 'bot', text: 'Sorry, something went wrong. Please try again.' },
               ],
             }));
           } else {
