@@ -328,6 +328,37 @@
   margin-bottom: 24px;
 }
 
+.footerSocial {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.footerSocialLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 7px;
+  background: rgba(255,255,255,0.08);
+  transition: background 0.15s;
+  text-decoration: none;
+}
+
+.footerSocialLink:hover {
+  background: rgba(255,255,255,0.16);
+}
+
+.footerPrivacy {
+  font-size: 12px;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.5;
+  margin-bottom: 6px;
+}
+
 .footerLinks {
   display: flex;
   flex-direction: column;

@@ -1,6 +1,9 @@
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import type { Message } from '@/hooks/useChat';
 import styles from './MessageBubble.module.css';
+import QuickWinBubble from './QuickWinBubble';
+import CalendlyBubble from './CalendlyBubble';
 
 export default function MessageBubble({ message }: { message: Message }) {
   if (message.role === 'user') {
@@ -10,14 +13,27 @@ export default function MessageBubble({ message }: { message: Message }) {
       </div>
     );
   }
+
+  const isQuickWinAccordion = message.displayFormat === 'quickwin-accordion';
+  const isQuickWinPullquotes = message.displayFormat === 'quickwin-pullquotes';
+  const isCalendly = message.displayFormat === 'calendly';
+
   return (
     <div className={styles.botRow}>
       <div className={styles.botAvatar}>E</div>
-      <div className={styles.botBubble}>
+      <div className={isCalendly ? styles.calendlyBubble : styles.botBubble}>
         <div className={styles.botName}>Exactly</div>
-        <div className={styles.botText}>
-          <ReactMarkdown>{message.text}</ReactMarkdown>
-        </div>
+        {isCalendly ? (
+          <CalendlyBubble />
+        ) : isQuickWinAccordion ? (
+          <QuickWinBubble text={message.text} format="accordion" />
+        ) : isQuickWinPullquotes ? (
+          <QuickWinBubble text={message.text} format="pullquotes" />
+        ) : (
+          <div className={styles.botText}>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.text}</ReactMarkdown>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -214,8 +214,6 @@
 
 .footerLogoSvg {
   color: #FFFFFF;
-  filter: invert(1);
-  opacity: 1;
 }
 
 .footerHeadline {
@@ -331,7 +329,7 @@
   border-top: 1px solid rgba(255,255,255,0.07);
   padding: 20px 0 24px;
   display: flex;
-  justify-content: flex-start;
+  justify-content: flex-end;
   align-items: center;
   flex-wrap: wrap;
   gap: 20px;

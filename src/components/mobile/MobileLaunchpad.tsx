@@ -7,19 +7,18 @@ import LogoWordmark from '@/components/shared/LogoWordmark';
 import styles from './MobileLaunchpad.module.css';
 
 const PILLS = [
-  { label: 'CRO Score', context: 'cro-score' },
-  { label: 'Your SWOT', context: 'swot' },
   { label: 'AI Wins', context: 'quick-wins' },
+  { label: 'CRO Score', context: 'cro-score' },
   { label: 'AI Visibility', context: 'ai-visibility' },
   { label: 'About Exactly', context: 'exactly-difference' },
 ];
 
 const CARDS = [
-  { bg: '#7D8F3C', titleColor: '#1B2A4A', title: 'QUICK', title2: 'WINS', sub: 'For your business', context: 'quick-wins', subColor: '#ffffff' },
-  { bg: '#1B2A4A', titleColor: 'rgba(255,255,255,0.92)', title: 'DEEP', title2: 'DIVES', sub: 'Full AI report', context: 'deep-dives', subColor: 'rgba(255,255,255,0.72)' },
-  { bg: '#E8532A', titleColor: 'rgba(255,255,255,0.92)', title: 'CRO', title2: 'CHATBOT', sub: 'For my website', context: 'cro-chatbots', subColor: 'rgba(255,255,255,0.72)' },
-  { bg: '#2D5A2D', titleColor: '#FF6B00', titleThe: 'THE', title: 'EXACTLY', title2: 'DIFFERENCE', sub: "Why we're different", context: 'exactly-difference', subColor: 'rgba(255,255,255,0.72)' },
-  { bg: '#FFD700', titleColor: 'rgba(0,0,0,0.75)', title: 'YOUR', title2: 'AI ROADMAP', sub: 'Where to start', context: 'ai-roadmap', subColor: '#2E2925', titleSmall: true },
+  { bg: '#7D8F3C', titleColor: '#1B2A4A', title: 'QUICK', title2: 'WINS', sub: 'Delivered in chat in seconds', context: 'quick-wins', subColor: '#ffffff' },
+  { bg: '#1B2A4A', titleColor: 'rgba(255,255,255,0.92)', title: 'DEEP', title2: 'DIVES', sub: 'In your inbox in minutes', context: 'deep-dives', subColor: 'rgba(255,255,255,0.72)' },
+  { bg: '#E8532A', titleColor: 'rgba(255,255,255,0.92)', title: 'CRO', title2: 'CHATBOT', sub: 'Turn visitors into conversions', context: 'cro-chatbots', subColor: 'rgba(255,255,255,0.72)' },
+  { bg: '#2D5A2D', titleColor: '#FF6B00', title: 'YOUR AI', title2: 'ROADMAP', sub: 'Book an AI Consultation', context: 'ai-roadmap', subColor: 'rgba(255,255,255,0.8)' },
+  { bg: '#FFD700', titleColor: 'rgba(0,0,0,0.75)', titleThe: 'THE', title: 'EXACTLY', title2: 'DIFFERENCE', sub: 'Done-for-you outcomes', context: 'exactly-difference', subColor: '#2E2925', titleSmall: true },
 ];
 
 type Props = ChatState & ChatActions;
@@ -134,24 +133,41 @@ export default function MobileLaunchpad({ send }: Props) {
       {/* Footer */}
       <footer className={styles.footer}>
         <div className={styles.footerLogoWrap}>
-          <LogoWordmark height={28} style={{ filter: 'invert(1)', opacity: 0.9 }} />
+          <LogoWordmark height={28} style={{ color: '#FFFFFF', opacity: 0.9 }} />
         </div>
         <h3 className={styles.footerHeadline}>
-          AI that <span className={styles.footerHeadlineGreen}>actually works</span><br />
-          for your business.
+          AI Without The <span className={styles.footerHeadlineGreen}>Hassle</span>
         </h3>
-        <p className={styles.footerTagline}>
-          Done-for-you AI solutions. No tools, no training — just outcomes.
-        </p>
+        <p className={styles.footerTagline}>Done-For-You AI with guaranteed results.</p>
         <div className={styles.footerLinks}>
-          <p className={styles.footerNavLabel}>AI Solutions</p>
+          <p className={styles.footerNavLabel}>Explore</p>
           <a href="#" className={styles.footerNavLink}>Quick Wins For Your Business</a>
           <a href="#" className={styles.footerNavLink}>Deep Dive Reports</a>
           <a href="#" className={styles.footerNavLink}>CRO Chatbot For My Website</a>
-          <p className={styles.footerNavLabel}>Company</p>
           <a href="#" className={styles.footerNavLink}>The Exactly Difference</a>
-          <a href="#" className={styles.footerNavLink}>Who We Are</a>
         </div>
+        <div className={styles.footerSocial}>
+          <a href="mailto:deb@exactlyai.solutions" className={styles.footerSocialLink} aria-label="Email">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+          </a>
+          <a href="https://www.linkedin.com/company/exactly-ai-solutions/" target="_blank" rel="noopener" className={styles.footerSocialLink} aria-label="LinkedIn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+            </svg>
+          </a>
+          <a href="tel:+12128138134" className={styles.footerSocialLink} aria-label="Phone">
+            <svg width="13" height="16" viewBox="0 0 14 22" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="1" y="1" width="12" height="20" rx="3" ry="3"/>
+              <line x1="5" y1="2.5" x2="9" y2="2.5" strokeWidth="1.2"/>
+              <circle cx="7" cy="18.5" r="0.8" fill="white" stroke="none"/>
+            </svg>
+          </a>
+        </div>
+        <p className={styles.footerPrivacy}>We don&rsquo;t sell your data. Ever.</p>
+        <p className={styles.footerPrivacy}>This site uses cookies to improve your experience.</p>
         <div className={styles.footerBottom}>
           <div className={styles.footerLegal}>
             <a href="#">Privacy</a>

@@ -1,0 +1,244 @@
+/* quickwin-animation.css */
+/* Exactly AI Solutions — Quick Win Animation */
+
+/* Typing indicator */
+.typing {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .typing-bubble {
+      background: var(--gray-100);
+      border-radius: 4px 18px 18px 18px;
+      padding: 14px 18px;
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
+
+    .typing-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--gray-400);
+      animation: typingBounce 1.2s ease-in-out infinite;
+    }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes typingBounce {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-5px); }
+    }
+
+/* Bot name */
+.bot-name {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 6px;
+    }
+
+/* FadeUp */
+@keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+/* Quick Win styles */
+/* ── QUICK WIN CONTROLS ── */
+    .qw-progress-bar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--gray-200);
+      padding: 10px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .qw-progress-dots {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .qw-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--gray-200);
+      transition: background 0.3s, transform 0.3s;
+    }
+    .qw-dot.active {
+      background: var(--green);
+      transform: scale(1.2);
+    }
+    .qw-dot.done {
+      background: var(--navy);
+    }
+
+
+
+
+    /* ── BOOKMARK ── */
+    .qw-bookmark-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--gray-400);
+      transition: color 0.15s;
+      padding: 0;
+      display: flex;
+      align-items: center;
+    }
+    .qw-bookmark-btn:hover, .qw-bookmark-btn.saved { color: var(--green); }
+
+    /* ── QUICK WIN SEQUENCE STYLES ── */
+    .qw-bubble {
+      max-width: 835px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .qw-header {
+      font-family: var(--font-body);
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #000000;
+      line-height: 1.3;
+      margin-top: 14px;
+      margin-bottom: 0;
+    }
+    .qw-body {
+      font-size: 15px;
+      line-height: 1.7;
+      color: #4B5563;
+    }
+    .qw-punchy {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--black);
+    }
+    .qw-bullets {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .qw-bullets li {
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--black);
+      padding-left: 16px;
+      position: relative;
+    }
+    .qw-bullets li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: var(--green);
+    }
+    .qw-body strong {
+      font-weight: 900;
+      font-size: 16px;
+      color: #1B2A4A;
+    }
+    .qw-numlist {
+      padding-left: 20px;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      font-size: 15px;
+      line-height: 1.7;
+      color: #1a1a1a;
+    }
+    .qw-numlist li {
+      padding-left: 6px;
+    }
+    .qw-numlist li strong {
+      font-weight: 800;
+      color: var(--black);
+    }
+    .qw-numhead {
+      font-family: var(--font-body);
+      font-size: 16px;
+      font-weight: 700;
+      color: #000000;
+      letter-spacing: -0.01em;
+      line-height: 1.3;
+      margin-top: 12px;
+      margin-bottom: 0;
+    }
+      font-size: 11px;
+      color: var(--gray-400);
+      margin-top: 8px;
+    }
+      display: flex;
+      gap: 10px;
+      margin-top: 4px;
+      flex-wrap: wrap;
+    }
+    .qw-cta-btn {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 9px 20px;
+      border-radius: 100px;
+      text-decoration: none;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      letter-spacing: 0.01em;
+    }
+    .qw-cta-primary {
+      background: var(--navy);
+      color: var(--white);
+      border: 1.5px solid var(--navy);
+    }
+    .qw-cta-primary:hover { background: #243860; border-color: #243860; }
+    .qw-cta-secondary {
+      background: transparent;
+      color: var(--navy);
+      border: 1.5px solid #D1D5DB;
+    }
+    .qw-cta-secondary:hover { border-color: var(--navy); background: rgba(27,42,74,0.04); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+
+/* Accordion */
+.qw-accordion { border: 1px solid #E5E7EB; border-radius: 10px; overflow: hidden; margin: 12px 0; }
+.qw-acc-item { border-bottom: 1px solid #E5E7EB; }
+.qw-acc-item:last-child { border-bottom: none; }
+.qw-acc-trigger {
+  width: 100%; background: none; border: none; padding: 13px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  cursor: pointer; font-family: 'DM Sans', sans-serif; text-align: left; gap: 8px;
+}
+.qw-acc-trigger:hover { background: #F5F5F4; }
+.qw-acc-trigger.acc-open { background: rgba(27,42,74,0.04); }
+.qw-acc-label { font-size: 14px; font-weight: 700; color: #1B2A4A; line-height: 1.3; }
+.qw-acc-chevron { color: #9CA3AF; font-size: 12px; flex-shrink: 0; transition: transform 0.22s; display: inline-block; }
+.qw-acc-trigger.acc-open .qw-acc-chevron { transform: rotate(180deg); }
+.qw-acc-body {
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.35s ease, padding 0.2s ease;
+  padding: 0 16px;
+}
+.qw-acc-body.acc-open { max-height: 3000px; padding: 12px 16px 16px; }

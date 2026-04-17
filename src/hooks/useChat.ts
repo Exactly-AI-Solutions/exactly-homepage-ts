@@ -5,6 +5,11 @@ export interface Message {
   id: string;
   role: 'user' | 'bot';
   text: string;
+  displayFormat?: 'quickwin-accordion' | 'quickwin-pullquotes' | 'calendly';
+}
+
+function hasSchedulingIntent(text: string): boolean {
+  return /\b(schedul|book(ing)?|appoint|consult|meeting|call|demo|talk\s+to|speak\s+with|chat\s+with)\b/i.test(text);
 }
 
 export interface ChatState {
@@ -49,6 +54,9 @@ export function useChat(): ChatState & ChatActions {
       }));
 
       let botMessageAdded = false;
+      const showCalendly = hasSchedulingIntent(text);
+      const isQuickWin = newContext === 'quick-wins';
+      let bufferedText = '';
 
       fetch('/api/chat', {
         method: 'POST',
@@ -75,14 +83,53 @@ export function useChat(): ChatState & ChatActions {
             for (const line of lines) {
               if (!line.startsWith('data: ')) continue;
               const data = line.slice(6).trim();
-              if (data === '[DONE]') return;
+              if (data === '[DONE]') {
+                if (isQuickWin) {
+                  const splitMatch = bufferedText.match(/^([\s\S]*?)(\s*# [\s\S]*)$/);
+                  if (splitMatch && splitMatch[1].trim()) {
+                    const preamble = splitMatch[1].trim();
+                    const quickwinContent = splitMatch[2].trim();
+                    setState((prev) => ({
+                      ...prev,
+                      isTyping: false,
+                      messages: [
+                        ...prev.messages,
+                        { id: botId, role: 'bot' as const, text: preamble },
+                        { id: uid(), role: 'bot' as const, text: quickwinContent, displayFormat: 'quickwin-accordion' as const },
+                      ],
+                    }));
+                  } else {
+                    setState((prev) => ({
+                      ...prev,
+                      isTyping: false,
+                      messages: [
+                        ...prev.messages,
+                        { id: botId, role: 'bot' as const, text: bufferedText, displayFormat: 'quickwin-accordion' as const },
+                      ],
+                    }));
+                  }
+                }
+                if (showCalendly) {
+                  setState((prev) => ({
+                    ...prev,
+                    messages: [
+                      ...prev.messages,
+                      { id: uid(), role: 'bot', text: '', displayFormat: 'calendly' as const },
+                    ],
+                  }));
+                }
+                return;
+              }
 
               try {
                 const parsed = JSON.parse(data) as { text?: string; error?: string };
                 if (parsed.error) throw new Error(parsed.error);
 
                 if (parsed.text) {
-                  if (!botMessageAdded) {
+                  if (isQuickWin) {
+                    // Buffer silently — render complete markdown on [DONE]
+                    bufferedText += parsed.text;
+                  } else if (!botMessageAdded) {
                     // First chunk: add bot message and stop typing indicator
                     botMessageAdded = true;
                     setState((prev) => ({
@@ -94,7 +141,7 @@ export function useChat(): ChatState & ChatActions {
                       ],
                     }));
                   } else {
-                    // Subsequent chunks: append text to existing bot message
+                    // Subsequent chunks: append to existing bot message
                     setState((prev) => ({
                       ...prev,
                       messages: prev.messages.map((m) =>
@@ -110,7 +157,7 @@ export function useChat(): ChatState & ChatActions {
           }
         })
         .catch(() => {
-          if (!botMessageAdded) {
+          if (!botMessageAdded && !isQuickWin) {
             setState((prev) => ({
               ...prev,
               isTyping: false,
@@ -121,6 +168,24 @@ export function useChat(): ChatState & ChatActions {
                   role: 'bot',
                   text: 'Sorry, something went wrong. Please try again.',
                 },
+              ],
+            }));
+          } else if (isQuickWin && bufferedText) {
+            setState((prev) => ({
+              ...prev,
+              isTyping: false,
+              messages: [
+                ...prev.messages,
+                { id: botId, role: 'bot', text: bufferedText + '\n\n[Connection lost. Please try again.]' },
+              ],
+            }));
+          } else if (isQuickWin) {
+            setState((prev) => ({
+              ...prev,
+              isTyping: false,
+              messages: [
+                ...prev.messages,
+                { id: botId, role: 'bot', text: 'Sorry, something went wrong. Please try again.' },
               ],
             }));
           } else {
