@@ -86,48 +86,45 @@ export default function DesktopLaunchpad({ send, context: activeContext }: Props
         <div className={styles.footerGrid}>
           <div className={styles.footerLeft}>
             <div className={styles.footerLogoWrap}>
-              <LogoWordmark height={36} className={styles.footerLogoSvg} style={{ filter: 'invert(1)', opacity: 1 }} />
+              <LogoWordmark height={36} className={styles.footerLogoSvg} />
             </div>
-            <p className={styles.footerTagline}>
-              Exactly AI builds done-for-you AI solutions for growing businesses.
-              No tools, no training — just outcomes.
-            </p>
-            <p className={styles.footerPrivacy}>
-              We never store your site data without permission.
-            </p>
+            <h3 className={styles.footerHeadline}>
+              AI Without The <span className={styles.footerHeadlineGreen}>Hassle</span>
+            </h3>
+            <p className={styles.footerTagline}>Done-For-You AI with guaranteed results.</p>
             <div className={styles.footerSocial}>
-              <a href="#" className={styles.footerSocialLink} aria-label="LinkedIn">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
-                  <rect x="2" y="9" width="4" height="12"/>
-                  <circle cx="4" cy="4" r="2"/>
+              <a href="https://www.linkedin.com/company/exactly-ai-solutions/" target="_blank" rel="noopener" className={styles.footerSocialLink} aria-label="LinkedIn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
                 </svg>
               </a>
-              <a href="#" className={styles.footerSocialLink} aria-label="Twitter/X">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="rgba(255,255,255,0.7)">
-                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.261 5.635zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+              <a href="mailto:deb@exactlyai.solutions" className={styles.footerSocialLink} aria-label="Email">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                  <polyline points="22,6 12,13 2,6"/>
+                </svg>
+              </a>
+              <a href="tel:+12128138134" className={styles.footerSocialLink} aria-label="Phone">
+                <svg width="13" height="16" viewBox="0 0 14 22" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="1" y="1" width="12" height="20" rx="3" ry="3"/>
+                  <line x1="5" y1="2.5" x2="9" y2="2.5" strokeWidth="1.2"/>
+                  <circle cx="7" cy="18.5" r="0.8" fill="white" stroke="none"/>
                 </svg>
               </a>
             </div>
+            <p className={styles.footerPrivacy}>We don&rsquo;t sell your data. Ever.</p>
+            <p className={styles.footerPrivacy}>This site uses cookies to enhance your experience.</p>
           </div>
 
           <div className={styles.footerNav}>
-            <p className={styles.footerNavLabel}>AI Solutions</p>
+            <p className={styles.footerNavLabel}>Explore</p>
             <a href="#" className={styles.footerNavLink}>Quick Wins For Your Business</a>
             <a href="#" className={styles.footerNavLink}>Deep Dive Reports</a>
             <a href="#" className={styles.footerNavLink}>CRO Chatbot For My Website</a>
-            <p className={styles.footerNavLabel}>Company</p>
             <a href="#" className={styles.footerNavLink}>The Exactly Difference</a>
-            <a href="#" className={styles.footerNavLink}>Who We Are</a>
-            <a href="#" className={styles.footerNavLink}>How It Works</a>
           </div>
 
-          <div>
-            <div className={styles.footerChatbotCallout}>
-              <p>See an AI chatbot that actually converts — built for businesses like yours.</p>
-              <a href="#">Try the CRO Chatbot &rarr;</a>
-            </div>
-          </div>
+          <div />
         </div>
 
         <div className={styles.footerBottom}>

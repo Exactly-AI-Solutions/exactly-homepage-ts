@@ -5,6 +5,7 @@ export interface Message {
   id: string;
   role: 'user' | 'bot';
   text: string;
+  displayFormat?: 'quickwin-accordion' | 'quickwin-pullquotes';
 }
 
 export interface ChatState {
@@ -85,12 +86,18 @@ export function useChat(): ChatState & ChatActions {
                   if (!botMessageAdded) {
                     // First chunk: add bot message and stop typing indicator
                     botMessageAdded = true;
+                    const isQuickWin = newContext === 'quick-wins';
                     setState((prev) => ({
                       ...prev,
                       isTyping: false,
                       messages: [
                         ...prev.messages,
-                        { id: botId, role: 'bot', text: parsed.text! },
+                        {
+                          id: botId,
+                          role: 'bot',
+                          text: parsed.text!,
+                          ...(isQuickWin ? { displayFormat: 'quickwin-accordion' as const } : {}),
+                        },
                       ],
                     }));
                   } else {

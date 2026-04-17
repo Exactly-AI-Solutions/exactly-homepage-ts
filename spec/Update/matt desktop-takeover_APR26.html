@@ -1,0 +1,2063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exactly AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #0A0A0A;
+      --white: #FFFFFF;
+      --green: #7D8F3C;
+      --navy: #1B2A4A;
+      --orange: #FF6B35;
+      --gray-50: #F9FAFB;
+      --gray-100: #F5F5F4;
+      --gray-200: #E5E7EB;
+      --gray-400: #9CA3AF;
+      --gray-700: #374151;
+      --font-display: 'Bebas Neue', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: var(--font-body);
+      background: #DBEAFE;
+      color: var(--black);
+      overflow: hidden;
+    }
+
+    /* ── LAYOUT ── */
+    .page {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ── TOP NAV ── */
+    .topnav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 48px 16px;
+      flex-shrink: 0;
+      background: #DBEAFE;
+      position: relative;
+    }
+    .topnav-logo {
+      position: absolute;
+      left: 48px;
+      top: 20px;
+      flex-shrink: 0;
+    }
+    .topnav-logo svg { display: block; }
+    .topnav-items {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .topnav-item {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 500;
+      color: rgba(27,42,74,0.7);
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      white-space: nowrap;
+      line-height: 1.3;
+      text-align: left;
+    }
+    .topnav-item:hover { background: rgba(27,42,74,0.08); color: #1B2A4A; font-weight: 600; }
+    .topnav-item.active { background: rgba(27,42,74,0.08); color: #1B2A4A; font-weight: 600; }
+    .topnav-line1, .topnav-line2 { display: block; font-size: 13px; font-weight: 500; color: inherit; line-height: 1.3; }
+
+    /* ── RIGHT PANEL ── */
+    .right-panel {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      background: var(--white);
+      border-radius: 16px 16px 0 0;
+      overflow: hidden;
+      margin: 0 48px;
+      box-shadow: 0 -2px 24px rgba(27,42,74,0.08);
+      max-height: 78vh;
+      position: relative;
+    }
+
+    /* ── CHAT TOPBAR ── */
+    .chat-topbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 32px;
+      border-bottom: 1px solid var(--gray-200);
+      flex-shrink: 0;
+      background: var(--white);
+    }
+
+    .chat-topbar-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 16px;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+
+    .chat-topbar-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--black);
+      letter-spacing: -0.01em;
+    }
+
+    .chat-topbar-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 2px;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(0.85); }
+    }
+
+    .chat-topbar-status span {
+      font-size: 12px;
+      color: var(--gray-400);
+    }
+
+    .topbar-social {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .topbar-social a {
+      color: #C4C9D4;
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .topbar-social a:hover { color: var(--navy); }
+
+    /* ── CHAT AREA ── */
+    .chat-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px 32px 20px;
+      display: flex;
+      flex-direction: column;
+      scroll-behavior: smooth;
+    }
+
+    .chat-area::-webkit-scrollbar { width: 4px; }
+    .chat-area::-webkit-scrollbar-track { background: transparent; }
+    .chat-area::-webkit-scrollbar-thumb { background: var(--gray-200); border-radius: 2px; }
+
+    .msg-bot {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 16px;
+      animation: fadeUp 0.4s ease both;
+    }
+
+    .bot-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-family: var(--font-display);
+      font-size: 15px;
+      color: var(--white);
+      margin-top: 2px;
+    }
+
+    .bot-bubble {
+      background: var(--gray-100);
+      border-radius: 4px 18px 18px 18px;
+      padding: 14px 18px;
+      max-width: 72%;
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--black);
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .bot-name {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 6px;
+    }
+
+    .typing {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .typing-bubble {
+      background: var(--gray-100);
+      border-radius: 4px 18px 18px 18px;
+      padding: 14px 18px;
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
+
+    .typing-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--gray-400);
+      animation: typingBounce 1.2s ease-in-out infinite;
+    }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes typingBounce {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-5px); }
+    }
+
+    .msg-user {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 16px;
+      animation: fadeUp 0.3s ease both;
+    }
+
+    .user-bubble {
+      background: var(--navy);
+      color: var(--white);
+      border-radius: 18px 18px 4px 18px;
+      padding: 14px 18px;
+      max-width: 68%;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+
+
+    /* ── CHAT INPUT ── */
+    .chat-input-bar {
+      padding: 12px 32px 20px;
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+
+    .chat-input-wrapper {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .chat-input {
+      width: 100%;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 12px;
+      padding: 18px 64px 18px 20px;
+      font-family: var(--font-body);
+      font-size: 15px;
+      color: var(--black);
+      background: var(--gray-100);
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+      box-sizing: border-box;
+    }
+    .chat-input::placeholder { color: var(--gray-400); }
+    .chat-input:focus {
+      border-color: var(--navy);
+      background: var(--white);
+    }
+
+    .send-btn {
+      position: absolute;
+      right: 10px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--navy);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.15s, transform 0.15s;
+    }
+    .send-btn:hover { background: var(--green); transform: translateY(-1px); }
+    .send-btn:active { opacity: 0.85; }
+
+    /* ── QUICK WIN CONTROLS ── */
+    .qw-progress-bar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--gray-200);
+      padding: 10px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .qw-progress-dots {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .qw-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--gray-200);
+      transition: background 0.3s, transform 0.3s;
+    }
+    .qw-dot.active {
+      background: var(--green);
+      transform: scale(1.2);
+    }
+    .qw-dot.done {
+      background: var(--navy);
+    }
+    .qw-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .qw-ctrl-btn {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--gray-600);
+      background: none;
+      border: 1px solid var(--gray-200);
+      border-radius: 6px;
+      padding: 5px 10px;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .qw-ctrl-btn:hover { color: var(--navy); border-color: var(--navy); }
+    .qw-ctrl-btn.active { background: var(--navy); color: white; border-color: var(--navy); }
+    .qw-speed-toggle {
+      display: flex;
+      border: 1px solid var(--gray-200);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .qw-speed-btn {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--gray-600);
+      background: none;
+      border: none;
+      border-right: 1px solid var(--gray-200);
+      padding: 5px 10px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .qw-speed-btn:last-child { border-right: none; }
+    .qw-speed-btn:hover { background: var(--gray-100); color: var(--navy); }
+    .qw-speed-btn.active { background: var(--navy); color: white; }
+
+    /* ── PAUSE / RESUME FLOAT ── */
+    .qw-pause-btn {
+      position: absolute;
+      bottom: 80px;
+      right: 20px;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--white);
+      background: var(--navy);
+      border: none;
+      border-radius: 20px;
+      padding: 8px 14px;
+      cursor: pointer;
+      box-shadow: 0 2px 12px rgba(27,42,74,0.25);
+      transition: background 0.15s, transform 0.15s;
+    }
+    .qw-pause-btn:hover { background: var(--green); transform: translateY(-1px); }
+
+    /* ── SCROLL TO TOP ── */
+    .qw-scroll-top {
+      display: flex;
+      justify-content: center;
+      margin: 8px 0 4px;
+    }
+    .qw-scroll-top-btn {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--gray-400);
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: color 0.15s;
+    }
+    .qw-scroll-top-btn:hover { color: var(--navy); }
+
+    /* ── REPLAY ── */
+    .qw-replay-row {
+      display: flex;
+      justify-content: center;
+      margin-top: 8px;
+    }
+    .qw-replay-btn {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--gray-400);
+      background: none;
+      border: 1px solid var(--gray-200);
+      border-radius: 6px;
+      padding: 6px 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+    .qw-replay-btn:hover { color: var(--navy); border-color: var(--navy); }
+
+    /* ── BOOKMARK ── */
+    .qw-bookmark-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--gray-400);
+      transition: color 0.15s;
+      padding: 0;
+      display: flex;
+      align-items: center;
+    }
+    .qw-bookmark-btn:hover, .qw-bookmark-btn.saved { color: var(--green); }
+
+    /* ── QUICK WIN SEQUENCE STYLES ── */
+    .qw-bubble {
+      max-width: 92%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .qw-header {
+      font-family: var(--font-display);
+      font-size: 18px;
+      letter-spacing: 0.06em;
+      color: var(--navy);
+      line-height: 1.2;
+    }
+    .qw-body {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--black);
+    }
+    .qw-punchy {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--black);
+    }
+    .qw-bullets {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .qw-bullets li {
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--black);
+      padding-left: 16px;
+      position: relative;
+    }
+    .qw-bullets li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: var(--green);
+    }
+    .qw-cta-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 4px;
+      flex-wrap: wrap;
+    }
+    .qw-cta-btn {
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 10px 18px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.15s;
+    }
+    .qw-cta-primary {
+      background: var(--green);
+      color: var(--white);
+    }
+    .qw-cta-primary:hover { background: #6a7a32; }
+    .qw-cta-secondary {
+      background: transparent;
+      color: var(--navy);
+      border: 1.5px solid var(--gray-200);
+    }
+    .qw-cta-secondary:hover { border-color: var(--navy); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── ICP CHECK WIDGET ── */
+    .report-widget {
+      background: var(--white);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      border: 1px solid var(--gray-200);
+      font-family: var(--font-body);
+      margin-top: 6px;
+      animation: fadeUp 0.35s ease both;
+    }
+    /* Summary card */
+    .rw-header { background: var(--navy); padding: 14px 18px 12px; }
+    .rw-type { font-family: var(--font-display); font-size: 10px; letter-spacing: 0.2em; color: var(--green); margin-bottom: 2px; }
+    .rw-title { font-family: var(--font-display); font-size: 22px; letter-spacing: 1px; color: var(--white); line-height: 1; margin-bottom: 3px; }
+    .rw-subtitle { font-size: 11px; color: rgba(255,255,255,0.75); line-height: 1.4; }
+    .rw-snapshot { background: var(--gray-50); border-bottom: 1px solid var(--gray-200); padding: 8px 18px; }
+    .rw-co-name { font-size: 11px; font-weight: 700; color: var(--navy); margin-bottom: 1px; }
+    .rw-co-meta { font-size: 10.5px; color: var(--gray-500); line-height: 1.4; }
+    .rw-summary { padding: 14px 18px; }
+    .rw-punch { font-size: 13px; font-weight: 700; color: var(--navy); line-height: 1.5; margin-bottom: 10px; }
+    .rw-teaser { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+    .rw-teaser-item { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: var(--gray-700); line-height: 1.45; }
+    .rw-teaser-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex-shrink: 0; margin-top: 5px; }
+    .rw-teaser-gem { background: rgba(125,143,60,0.12); border: 1px solid rgba(125,143,60,0.25); border-radius: 7px; padding: 7px 10px; display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: var(--gray-700); line-height: 1.45; }
+    .rw-gem-tag { font-size: 9px; font-weight: 700; color: var(--green); text-transform: uppercase; letter-spacing: 0.1em; white-space: nowrap; margin-top: 1px; }
+    .rw-expand-btn { width: 100%; font-family: var(--font-body); font-size: 12px; font-weight: 600; color: var(--navy); background: var(--gray-100); border: 1px solid var(--gray-200); border-radius: 8px; padding: 9px 14px; cursor: pointer; text-align: center; transition: background 0.15s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .rw-expand-btn:hover { background: var(--gray-200); }
+    .rw-expand-btn .chevron { transition: transform 0.25s; font-style: normal; display: inline-block; }
+    .rw-expand-btn.open .chevron { transform: rotate(180deg); }
+    /* Accordion full report */
+    .rw-full { display: none; border-top: 1px solid var(--gray-200); }
+    .rw-full.visible { display: block; }
+    .rw-accordion-item { border-bottom: 1px solid var(--gray-200); }
+    .rw-accordion-item:last-of-type { border-bottom: none; }
+    .rw-accordion-trigger { width: 100%; background: none; border: none; padding: 12px 18px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-family: var(--font-body); }
+    .rw-accordion-trigger:hover { background: var(--gray-50); }
+    .rw-acc-label { font-size: 12px; font-weight: 700; color: var(--navy); text-align: left; }
+    .rw-acc-label.gem { color: var(--green); }
+    .rw-acc-meta { font-size: 10.5px; color: var(--gray-400); text-align: left; }
+    .rw-acc-gem-badge { font-size: 9px; font-weight: 700; color: var(--white); background: var(--green); border-radius: 4px; padding: 2px 6px; text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap; }
+    .rw-acc-chevron { color: var(--gray-400); font-size: 12px; transition: transform 0.2s; flex-shrink: 0; }
+    .rw-accordion-trigger.open .rw-acc-chevron { transform: rotate(180deg); }
+    .rw-accordion-content { max-height: 0; overflow: hidden; padding: 0 18px; transition: max-height 0.35s ease, padding 0.2s ease; }
+    .rw-accordion-content.open { max-height: 1000px; padding: 0 18px 14px; }
+    .rw-targets-lbl { font-size: 9.5px; font-weight: 700; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2px; }
+    .rw-targets { font-size: 11px; color: var(--gray-500); line-height: 1.5; margin-bottom: 8px; font-style: italic; }
+    .rw-para { font-size: 12px; color: var(--gray-700); line-height: 1.65; margin-bottom: 7px; }
+    .rw-icp-punch { font-size: 12px; font-weight: 700; color: var(--navy); margin: 5px 0 7px; }
+    .rw-market { font-size: 11px; color: var(--gray-700); line-height: 1.5; margin-bottom: 4px; }
+    .rw-market strong { color: var(--navy); font-weight: 700; }
+    .rw-reach { font-size: 11px; font-style: italic; color: var(--gray-400); line-height: 1.5; }
+    .rw-reach strong { font-weight: 600; font-style: normal; color: var(--gray-500); }
+    /* CTA + footer */
+    .rw-cta { background: var(--navy); padding: 14px 18px; }
+    .rw-cta-p { font-size: 11px; color: rgba(255,255,255,0.65); line-height: 1.55; margin-bottom: 3px; }
+    .rw-cta-s { font-size: 11px; color: rgba(255,255,255,0.4); font-style: italic; margin-bottom: 10px; }
+    .rw-cta-link { font-size: 12px; font-weight: 600; color: var(--green); text-decoration: none; }
+    .rw-footer { background: var(--navy); padding: 9px 18px 12px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.07); }
+    .rw-footer-brand { font-size: 10px; color: rgba(255,255,255,0.6); font-style: italic; }
+    .rw-dl-btn { display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-body); font-size: 11px; font-weight: 600; color: var(--white); background: var(--green); border: 1px solid var(--green); border-radius: 5px; padding: 6px 12px; cursor: pointer; text-decoration: none; transition: background 0.15s; white-space: nowrap; }
+    .rw-dl-btn:hover { background: #6a7a33; }
+
+    /* ── ICONS + STAT BARS ── */
+    .rw-acc-icon { width: 30px; height: 30px; border-radius: 7px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .rw-acc-icon.icp1 { background: rgba(27,42,74,0.08); }
+    .rw-acc-icon.icp2 { background: rgba(255,107,53,0.1); }
+    .rw-acc-icon.icp3 { background: rgba(125,143,60,0.12); }
+    .rw-acc-trigger-left { display: flex; align-items: center; gap: 10px; }
+    .rw-stat { margin: 8px 0 6px; }
+    .rw-stat-label { font-size: 10px; font-weight: 700; color: var(--navy); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
+    .rw-stat-label span { font-weight: 400; color: var(--gray-500); text-transform: none; letter-spacing: 0; font-size: 11px; }
+    .rw-stat-bars { display: flex; flex-direction: column; gap: 5px; }
+    .rw-bar-row { display: flex; align-items: center; gap: 8px; }
+    .rw-bar-track { flex: 1; height: 5px; background: var(--gray-200); border-radius: 3px; overflow: hidden; }
+    .rw-bar-fill { height: 100%; border-radius: 3px; background: var(--navy); width: 0 !important; transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
+    .rw-bar-fill.green { background: var(--green); }
+    .rw-bar-fill.orange { background: var(--orange); }
+    .rw-bar-fill.animated { width: var(--target-width) !important; }
+    .rw-bar-val { font-size: 10px; color: var(--gray-500); white-space: nowrap; min-width: 60px; text-align: right; }
+
+    /* ── BOOKMARK ── */
+    .rw-header { position: relative; }
+    .rw-bookmark-btn { position: absolute; top: 12px; right: 14px; background: none; border: none; cursor: pointer; padding: 4px; opacity: 0.5; transition: opacity 0.15s; }
+    .rw-bookmark-btn:hover { opacity: 1; }
+    .rw-bookmark-btn.saved .bookmark-icon { fill: #7D8F3C; stroke: #7D8F3C; }
+    .rw-bookmark-btn.saved { opacity: 1; }
+    .rw-toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--navy); color: var(--white); font-family: var(--font-body); font-size: 12px; font-weight: 500; padding: 8px 16px; border-radius: 20px; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; z-index: 9999; white-space: nowrap; }
+    .rw-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ── SHARE ── */
+    .rw-footer { position: relative; }
+    .rw-share-btn { display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-body); font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 5px; padding: 6px 10px; cursor: pointer; text-decoration: none; transition: background 0.15s, color 0.15s; white-space: nowrap; }
+    .rw-share-btn:hover { background: rgba(255,255,255,0.15); color: var(--white); }
+    .rw-share-popover { position: absolute; bottom: calc(100% + 8px); right: 0; background: var(--white); border: 1px solid var(--gray-200); border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); padding: 6px; min-width: 180px; display: none; z-index: 100; }
+    .rw-share-popover.open { display: block; animation: fadeUp 0.15s ease both; }
+    .rw-share-option { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 6px; font-family: var(--font-body); font-size: 12px; font-weight: 500; color: var(--gray-700); background: none; border: none; width: 100%; cursor: pointer; text-align: left; transition: background 0.1s; }
+    .rw-share-option:hover { background: var(--gray-100); color: var(--navy); }
+    .rw-share-option svg { flex-shrink: 0; color: var(--gray-400); }
+    .rw-share-option:hover svg { color: var(--navy); }
+    .rw-share-divider { height: 1px; background: var(--gray-200); margin: 4px 0; }
+    .rw-footer-actions { display: flex; align-items: center; gap: 6px; }
+
+    /* ── MOBILE BASE FIXES ── */
+    @media (max-width: 480px) {
+      /* Footer: stack brand on top, buttons below */
+      .rw-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 12px 16px 14px;
+      }
+      .rw-footer-actions {
+        width: 100%;
+        justify-content: flex-start;
+      }
+      /* Accordion trigger: wrap meta below label */
+      .rw-accordion-trigger {
+        padding: 10px 14px;
+      }
+      .rw-acc-trigger-left {
+        flex: 1;
+        min-width: 0;
+      }
+      .rw-acc-label {
+        font-size: 11px;
+        white-space: normal;
+      }
+      .rw-acc-meta {
+        font-size: 10px;
+        white-space: normal;
+      }
+      /* Tighten body padding */
+      .rw-summary, .rw-body {
+        padding: 12px 14px 0;
+      }
+      .rw-accordion-content {
+        padding: 0 14px;
+      }
+      .rw-accordion-content.open {
+        padding: 0 14px 12px;
+      }
+      .rw-gem-banner {
+        margin: 0 -14px 14px;
+        padding: 6px 14px;
+      }
+      .rw-cta {
+        margin: 14px -14px 0;
+        padding: 12px 14px;
+      }
+      .rw-header {
+        padding: 14px 14px 12px;
+      }
+      .rw-snapshot {
+        padding: 8px 14px;
+      }
+      .rw-share-popover {
+        right: auto;
+        left: 0;
+      }
+
+      /* OPTION B: Swipeable cards — hidden on desktop */
+      .rw-swipe-container { display: block; }
+      .rw-accordion-view { display: none; }
+
+      /* OPTION C: Scorecard — hidden on desktop */
+      .rw-scorecard { display: block; }
+    }
+
+    /* Desktop: hide mobile-only views */
+    @media (min-width: 481px) {
+      .rw-swipe-container { display: none; }
+      .rw-scorecard { display: none; }
+      .rw-accordion-view { display: block; }
+    }
+
+    /* ── OPTION B: SWIPEABLE CARDS ── */
+    .rw-swipe-container {
+      display: none;
+      overflow: hidden;
+      position: relative;
+    }
+    .rw-swipe-track {
+      display: flex;
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .rw-swipe-card {
+      min-width: 100%;
+      padding: 14px;
+      box-sizing: border-box;
+    }
+    .rw-card-tag {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--gray-400);
+      margin-bottom: 4px;
+    }
+    .rw-card-tag.gem { color: var(--green); }
+    .rw-card-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 2px;
+      line-height: 1.3;
+    }
+    .rw-card-title.gem { color: var(--green); }
+    .rw-card-targets {
+      font-size: 11px;
+      color: var(--gray-500);
+      font-style: italic;
+      line-height: 1.45;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--gray-200);
+    }
+    .rw-card-body {
+      font-size: 12px;
+      color: var(--gray-700);
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+    .rw-card-punch {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 10px;
+      line-height: 1.4;
+    }
+    .rw-card-market {
+      font-size: 11px;
+      color: var(--gray-700);
+      margin-bottom: 4px;
+    }
+    .rw-card-market strong { color: var(--navy); font-weight: 700; }
+    .rw-card-reach {
+      font-size: 11px;
+      font-style: italic;
+      color: var(--gray-400);
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+    .rw-card-reach strong { font-weight: 600; font-style: normal; color: var(--gray-500); }
+    .rw-swipe-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px 12px;
+      border-top: 1px solid var(--gray-200);
+    }
+    .rw-swipe-btn {
+      background: var(--navy);
+      color: var(--white);
+      border: none;
+      border-radius: 6px;
+      padding: 7px 14px;
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .rw-swipe-btn:disabled { background: var(--gray-200); color: var(--gray-400); cursor: default; }
+    .rw-swipe-btn:not(:disabled):hover { background: #243d6b; }
+    .rw-swipe-dots {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .rw-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gray-200);
+      transition: background 0.2s, transform 0.2s;
+    }
+    .rw-dot.active {
+      background: var(--navy);
+      transform: scale(1.3);
+    }
+    .rw-dot.gem-dot.active { background: var(--green); }
+
+    /* ── OPTION C: SCORECARD ── */
+    .rw-scorecard {
+      display: none;
+      padding: 12px 14px 0;
+    }
+    .rw-score-intro {
+      font-size: 12px;
+      color: var(--gray-500);
+      margin-bottom: 12px;
+      font-style: italic;
+    }
+    .rw-score-item {
+      border: 1px solid var(--gray-200);
+      border-radius: 10px;
+      margin-bottom: 8px;
+      overflow: hidden;
+      transition: border-color 0.15s;
+    }
+    .rw-score-item.gem { border-color: rgba(125,143,60,0.35); }
+    .rw-score-trigger {
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 11px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      font-family: var(--font-body);
+      text-align: left;
+    }
+    .rw-score-trigger:active { background: var(--gray-50); }
+    .rw-score-icon { width: 28px; height: 28px; border-radius: 7px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .rw-score-icon.icp1 { background: rgba(27,42,74,0.08); }
+    .rw-score-icon.icp2 { background: rgba(255,107,53,0.1); }
+    .rw-score-icon.icp3 { background: rgba(125,143,60,0.12); }
+    .rw-score-info { flex: 1; min-width: 0; }
+    .rw-score-name { font-size: 12px; font-weight: 700; color: var(--navy); line-height: 1.3; margin-bottom: 3px; }
+    .rw-score-name.gem { color: var(--green); }
+    .rw-score-pills { display: flex; gap: 4px; flex-wrap: wrap; }
+    .rw-score-pill {
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .rw-score-pill.strong { background: rgba(27,42,74,0.1); color: var(--navy); }
+    .rw-score-pill.gem { background: rgba(125,143,60,0.15); color: var(--green); }
+    .rw-score-pill.hidden { background: rgba(125,143,60,0.15); color: var(--green); }
+    .rw-score-chevron { color: var(--gray-400); font-size: 12px; transition: transform 0.2s; }
+    .rw-score-trigger.open .rw-score-chevron { transform: rotate(180deg); }
+    .rw-score-detail {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease, padding 0.2s ease;
+      padding: 0 14px;
+      border-top: 0px solid var(--gray-200);
+    }
+    .rw-score-detail.open {
+      max-height: 800px;
+      padding: 12px 14px;
+      border-top: 1px solid var(--gray-200);
+    }
+    .rw-score-targets-lbl { font-size: 9px; font-weight: 700; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2px; }
+    .rw-score-targets { font-size: 11px; color: var(--gray-500); font-style: italic; line-height: 1.5; margin-bottom: 8px; }
+    .rw-score-para { font-size: 12px; color: var(--gray-700); line-height: 1.6; margin-bottom: 7px; }
+    .rw-score-punch { font-size: 12px; font-weight: 700; color: var(--navy); margin: 5px 0 7px; }
+    .rw-score-market { font-size: 11px; color: var(--gray-700); margin-bottom: 4px; }
+    .rw-score-market strong { color: var(--navy); font-weight: 700; }
+    .rw-score-reach { font-size: 11px; font-style: italic; color: var(--gray-400); line-height: 1.5; }
+    .rw-score-reach strong { font-weight: 600; font-style: normal; color: var(--gray-500); }
+    .rw-score-cta { background: var(--navy); margin: 14px -14px 0; padding: 12px 14px; }
+    .rw-score-cta-p { font-size: 11px; color: rgba(255,255,255,0.65); line-height: 1.55; margin-bottom: 3px; }
+    .rw-score-cta-s { font-size: 11px; color: rgba(255,255,255,0.4); font-style: italic; margin-bottom: 10px; }
+    .rw-score-cta-link { font-size: 12px; font-weight: 600; color: var(--green); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ── TOP NAV ── -->
+  <nav class="topnav">
+    <div class="topnav-logo">
+      <svg height="34" width="167" style="display:block; mix-blend-mode:multiply;" viewBox="0 0 2919 601" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M683.946 388V112.649H736.93V388H683.946ZM718.156 388V344.611H889.625V388H718.156ZM718.156 268.264V228.213H869.182V268.264H718.156ZM718.156 156.037V112.649H888.79V156.037H718.156ZM921.352 388L1015.22 250.324L922.603 112.649H984.349L1050.27 220.703H1052.35L1118.69 112.649H1180.85L1087.81 249.073L1183.35 388H1121.61L1052.35 277.859H1050.27L983.097 388H921.352ZM1202.45 388L1297.57 112.649H1374.76L1469.88 388H1412.3L1339.29 154.786H1333.45L1259.61 388H1202.45ZM1252.93 331.261V294.13H1426.49V331.261H1252.93ZM1623.07 393.424C1602.21 393.424 1583.58 390.503 1567.17 384.662C1550.76 378.543 1536.85 369.643 1525.45 357.962C1514.05 346.002 1505.28 331.261 1499.17 313.739C1493.05 296.216 1489.99 276.191 1489.99 253.662C1489.99 230.299 1493.05 209.578 1499.17 191.499C1505.56 173.421 1514.46 158.123 1525.87 145.607C1537.27 132.813 1550.9 123.218 1566.75 116.821C1582.61 110.424 1600.27 107.225 1619.74 107.225C1634.76 107.225 1648.66 109.172 1661.46 113.066C1674.25 116.96 1685.24 122.801 1694.41 130.588C1703.87 138.098 1711.24 147.276 1716.53 158.123C1721.81 168.692 1724.59 180.791 1724.87 194.42L1675.64 207.353C1675.92 194.837 1673.28 184.407 1667.71 176.063C1662.15 167.719 1654.92 161.461 1646.02 157.289C1637.4 153.117 1628.08 151.031 1618.07 151.031C1609.17 151.031 1600.27 152.839 1591.37 156.455C1582.74 160.07 1574.96 165.772 1568 173.56C1561.05 181.347 1555.49 191.638 1551.32 204.432C1547.14 216.948 1545.06 232.385 1545.06 250.742C1545.06 274.105 1548.39 293.018 1555.07 307.481C1562.02 321.944 1571.48 332.652 1583.44 339.605C1595.68 346.28 1609.45 349.618 1624.74 349.618C1640.32 349.618 1652.69 346.558 1661.87 340.439C1671.05 334.042 1677.73 325.698 1681.9 315.407C1686.07 304.838 1688.43 293.435 1688.99 281.197L1735.3 289.124C1735.02 303.587 1732.8 317.215 1728.62 330.009C1724.45 342.803 1717.92 353.929 1709.02 363.385C1700.39 372.842 1688.99 380.212 1674.81 385.497C1660.62 390.781 1643.38 393.424 1623.07 393.424ZM1838.31 388V112.649H1891.29V388H1838.31ZM1756.53 157.289V112.649H1973.48V157.289H1756.53ZM2014.58 388V112.649H2067.15V388H2014.58ZM2026.68 388V342.943H2187.72V388H2026.68ZM2259.47 388V301.223L2159.76 112.649H2222.34L2284.92 252.41H2287.01L2349.17 112.649H2411.34L2312.46 300.388V388H2259.47ZM2523.72 388L2618.84 112.649H2696.02L2791.14 388H2733.57L2660.56 154.786H2654.72L2580.87 388H2523.72ZM2574.2 331.261V294.13H2747.75V331.261H2574.2ZM2832.28 388V112.649H2885.68V388H2832.28Z" fill="black"/>
+<path d="M725.614 559.57C718.787 559.57 712.643 558.888 707.181 557.522C701.825 556.262 697.203 554.319 693.317 551.693C689.536 548.962 686.543 545.601 684.337 541.61C682.237 537.514 681.029 532.84 680.714 527.589L700.564 521.13C700.774 525.856 701.93 529.795 704.03 532.945C706.236 536.096 709.334 538.407 713.325 539.877C717.317 541.348 721.78 542.083 726.717 542.083C731.443 542.083 735.434 541.505 738.69 540.35C741.946 539.195 744.414 537.672 746.095 535.781C747.775 533.786 748.615 531.633 748.615 529.322C748.615 526.591 747.565 524.386 745.464 522.705C743.364 521.025 740.475 519.607 736.799 518.451C733.228 517.296 729.132 516.193 724.511 515.143C719.365 513.988 714.271 512.675 709.229 511.204C704.293 509.734 699.777 507.843 695.681 505.533C691.689 503.222 688.486 500.229 686.07 496.553C683.76 492.877 682.604 488.256 682.604 482.689C682.604 476.282 684.18 470.768 687.331 466.147C690.587 461.421 695.313 457.745 701.51 455.119C707.706 452.493 715.163 451.18 723.881 451.18C732.703 451.18 740.213 452.493 746.41 455.119C752.711 457.64 757.595 461.263 761.061 465.989C764.527 470.611 766.418 476.125 766.733 482.531L746.252 488.203C746.252 484.947 745.727 482.111 744.677 479.696C743.626 477.28 742.156 475.284 740.265 473.709C738.375 472.029 736.012 470.768 733.176 469.928C730.445 469.088 727.294 468.668 723.723 468.668C719.627 468.668 716.056 469.193 713.01 470.243C710.07 471.293 707.811 472.711 706.236 474.497C704.766 476.282 704.03 478.383 704.03 480.798C704.03 483.634 705.186 485.997 707.496 487.888C709.912 489.673 713.063 491.144 716.949 492.299C720.94 493.454 725.299 494.557 730.025 495.608C734.541 496.553 739.11 497.761 743.731 499.231C748.458 500.596 752.816 502.434 756.808 504.745C760.904 506.951 764.16 509.997 766.575 513.883C769.096 517.664 770.356 522.443 770.356 528.219C770.356 534.521 768.676 540.035 765.315 544.761C761.954 549.488 756.913 553.164 750.191 555.789C743.574 558.31 735.382 559.57 725.614 559.57ZM1001.69 559.57C994.126 559.57 987.352 558.415 981.365 556.104C975.379 553.689 970.232 550.223 965.926 545.707C961.725 541.085 958.469 535.466 956.158 528.849C953.953 522.127 952.85 514.46 952.85 505.848C952.85 493.559 955.003 483.424 959.309 475.442C963.615 467.355 969.497 461.316 976.954 457.324C984.516 453.228 993.024 451.18 1002.48 451.18C1009.83 451.18 1016.5 452.388 1022.48 454.804C1028.47 457.114 1033.56 460.58 1037.77 465.202C1042.07 469.718 1045.38 475.389 1047.69 482.216C1050 488.938 1051.16 496.658 1051.16 505.375C1051.16 514.303 1050 522.127 1047.69 528.849C1045.38 535.571 1042.02 541.243 1037.61 545.864C1033.3 550.38 1028.1 553.794 1022.01 556.104C1015.92 558.415 1009.15 559.57 1001.69 559.57ZM1002.32 541.453C1007.89 541.453 1012.56 540.087 1016.34 537.357C1020.12 534.626 1023.01 530.687 1025 525.541C1027 520.394 1028 514.093 1028 506.636C1028 498.863 1026.95 492.247 1024.85 486.785C1022.85 481.324 1019.91 477.175 1016.02 474.339C1012.14 471.398 1007.41 469.928 1001.85 469.928C996.384 469.928 991.711 471.346 987.825 474.182C984.044 476.912 981.103 480.903 979.002 486.155C977.007 491.406 976.009 497.918 976.009 505.69C976.009 511.362 976.586 516.456 977.742 520.972C979.002 525.383 980.735 529.112 982.941 532.158C985.146 535.204 987.877 537.514 991.133 539.09C994.389 540.665 998.117 541.453 1002.32 541.453ZM1238.9 557.365V453.386H1261.59V557.365H1238.9ZM1243.63 557.365V538.302H1305.54V557.365H1243.63ZM1531.48 559.57C1525.07 559.57 1519.35 558.888 1514.3 557.522C1509.37 556.262 1505.06 554.424 1501.39 552.008C1497.71 549.488 1494.61 546.494 1492.09 543.028C1489.67 539.457 1487.84 535.466 1486.58 531.055C1485.42 526.644 1484.84 521.812 1484.84 516.561V453.386H1507.69V515.773C1507.69 521.13 1508.53 525.593 1510.21 529.164C1511.99 532.63 1514.62 535.204 1518.09 536.884C1521.55 538.565 1525.96 539.405 1531.32 539.405C1536.78 539.405 1541.24 538.565 1544.71 536.884C1548.28 535.204 1550.91 532.63 1552.59 529.164C1554.37 525.593 1555.27 521.13 1555.27 515.773V453.386H1577.79V516.561C1577.79 530.215 1573.91 540.823 1566.14 548.385C1558.47 555.842 1546.92 559.57 1531.48 559.57ZM1790.72 557.365V453.386H1813.41V557.365H1790.72ZM1760 472.449V453.386H1844.13V472.449H1760ZM2027.24 557.365V453.386H2050.4V557.365H2027.24ZM2287.02 559.57C2279.46 559.57 2272.69 558.415 2266.7 556.104C2260.71 553.689 2255.57 550.223 2251.26 545.707C2247.06 541.085 2243.8 535.466 2241.49 528.849C2239.29 522.127 2238.19 514.46 2238.19 505.848C2238.19 493.559 2240.34 483.424 2244.65 475.442C2248.95 467.355 2254.83 461.316 2262.29 457.324C2269.85 453.228 2278.36 451.18 2287.81 451.18C2295.16 451.18 2301.83 452.388 2307.82 454.804C2313.81 457.114 2318.9 460.58 2323.1 465.202C2327.41 469.718 2330.72 475.389 2333.03 482.216C2335.34 488.938 2336.49 496.658 2336.49 505.375C2336.49 514.303 2335.34 522.127 2333.03 528.849C2330.72 535.571 2327.36 541.243 2322.94 545.864C2318.64 550.38 2313.44 553.794 2307.35 556.104C2301.26 558.415 2294.48 559.57 2287.02 559.57ZM2287.65 541.453C2293.22 541.453 2297.89 540.087 2301.68 537.357C2305.46 534.626 2308.35 530.687 2310.34 525.541C2312.34 520.394 2313.33 514.093 2313.33 506.636C2313.33 498.863 2312.28 492.247 2310.18 486.785C2308.19 481.324 2305.25 477.175 2301.36 474.339C2297.47 471.398 2292.75 469.928 2287.18 469.928C2281.72 469.928 2277.05 471.346 2273.16 474.182C2269.38 476.912 2266.44 480.903 2264.34 486.155C2262.34 491.406 2261.34 497.918 2261.34 505.69C2261.34 511.362 2261.92 516.456 2263.08 520.972C2264.34 525.383 2266.07 529.112 2268.28 532.158C2270.48 535.204 2273.21 537.514 2276.47 539.09C2279.72 540.665 2283.45 541.453 2287.65 541.453ZM2524.23 557.365V453.386H2553.85L2600.96 526.959H2602.69L2601.27 453.386H2623.33V557.365H2596.55L2546.76 480.326H2545.03L2546.45 557.365H2524.23ZM2855.14 559.57C2848.31 559.57 2842.17 558.888 2836.71 557.522C2831.35 556.262 2826.73 554.319 2822.84 551.693C2819.06 548.962 2816.07 545.601 2813.86 541.61C2811.76 537.514 2810.55 532.84 2810.24 527.589L2830.09 521.13C2830.3 525.856 2831.45 529.795 2833.55 532.945C2835.76 536.096 2838.86 538.407 2842.85 539.877C2846.84 541.348 2851.3 542.083 2856.24 542.083C2860.97 542.083 2864.96 541.505 2868.21 540.35C2871.47 539.195 2873.94 537.672 2875.62 535.781C2877.3 533.786 2878.14 531.633 2878.14 529.322C2878.14 526.591 2877.09 524.386 2874.99 522.705C2872.89 521.025 2870 519.607 2866.32 518.451C2862.75 517.296 2858.66 516.193 2854.04 515.143C2848.89 513.988 2843.8 512.675 2838.75 511.204C2833.82 509.734 2829.3 507.843 2825.21 505.533C2821.21 503.222 2818.01 500.229 2815.59 496.553C2813.28 492.877 2812.13 488.256 2812.13 482.689C2812.13 476.282 2813.7 470.768 2816.86 466.147C2820.11 461.421 2824.84 457.745 2831.03 455.119C2837.23 452.493 2844.69 451.18 2853.41 451.18C2862.23 451.18 2869.74 452.493 2875.93 455.119C2882.24 457.64 2887.12 461.263 2890.59 465.989C2894.05 470.611 2895.94 476.125 2896.26 482.531L2875.78 488.203C2875.78 484.947 2875.25 482.111 2874.2 479.696C2873.15 477.28 2871.68 475.284 2869.79 473.709C2867.9 472.029 2865.54 470.768 2862.7 469.928C2859.97 469.088 2856.82 468.668 2853.25 468.668C2849.15 468.668 2845.58 469.193 2842.53 470.243C2839.59 471.293 2837.34 472.711 2835.76 474.497C2834.29 476.282 2833.55 478.383 2833.55 480.798C2833.55 483.634 2834.71 485.997 2837.02 487.888C2839.44 489.673 2842.59 491.144 2846.47 492.299C2850.46 493.454 2854.82 494.557 2859.55 495.608C2864.07 496.553 2868.63 497.761 2873.26 499.231C2877.98 500.596 2882.34 502.434 2886.33 504.745C2890.43 506.951 2893.68 509.997 2896.1 513.883C2898.62 517.664 2899.88 522.443 2899.88 528.219C2899.88 534.521 2898.2 540.035 2894.84 544.761C2891.48 549.488 2886.44 553.164 2879.72 555.789C2873.1 558.31 2864.91 559.57 2855.14 559.57Z" fill="black"/>
+<g clip-path="url(#clip0_51_92)">
+<path d="M237.96 361.214L144.532 454.642C135.773 463.401 135.773 477.606 144.532 486.364C153.291 495.123 167.496 495.123 176.255 486.364L237.96 424.659C246.719 415.9 260.924 415.9 269.683 424.659L406.777 561.753C415.535 570.511 429.74 570.511 438.499 561.753C447.258 552.994 447.258 538.789 438.499 530.03L269.683 361.214C260.924 352.455 246.719 352.455 237.96 361.214Z" fill="black"/>
+<path d="M269.68 268.962L363.109 175.534C371.867 166.775 371.867 152.57 363.109 143.812C354.35 135.053 340.145 135.053 331.386 143.812L269.68 205.517C260.922 214.276 246.717 214.276 237.958 205.517L100.864 68.4233C92.1051 59.6646 77.9001 59.6646 69.1414 68.4233C60.3826 77.1821 60.3826 91.3871 69.1414 100.146L237.958 268.962C246.717 277.721 260.922 277.721 269.68 268.962Z" fill="black"/>
+<path d="M363.387 299.228L500.481 162.134C509.24 153.375 509.24 139.17 500.481 130.411C491.722 121.653 477.517 121.653 468.759 130.411L299.942 299.228C291.183 307.987 291.183 322.192 299.942 330.95L393.37 424.379C402.129 433.137 416.334 433.137 425.093 424.379C433.852 415.62 433.852 401.415 425.093 392.656L363.387 330.95C354.628 322.192 354.628 307.987 363.387 299.228Z" fill="black"/>
+<path d="M207.696 299.228L114.268 205.8C105.509 197.041 91.3041 197.041 82.5453 205.8C73.7866 214.559 73.7866 228.764 82.5453 237.522L144.251 299.228C153.01 307.987 153.01 322.192 144.251 330.95L7.15698 468.044C-1.60181 476.803 -1.60181 491.008 7.15698 499.767C15.9158 508.526 30.1208 508.526 38.8796 499.767L207.696 330.95C216.455 322.192 216.455 307.987 207.696 299.228Z" fill="black"/>
+</g>
+<defs>
+<clipPath id="clip0_51_92">
+<rect width="507.641" height="507.641" fill="white" transform="translate(0 61.2671)"/>
+</clipPath>
+</defs>
+</svg>
+    </div>
+    <div class="topnav-items">
+      <div class="topnav-item active" onclick="switchContext('quick-wins')">
+        <span class="topnav-line1">Quick Wins</span>
+        <span class="topnav-line2">For Your Business</span>
+      </div>
+      <div class="topnav-item" onclick="switchContext('deep-dives')">
+        <span class="topnav-line1">Deep Dive</span>
+        <span class="topnav-line2">Reports</span>
+      </div>
+      <div class="topnav-item" onclick="switchContext('cro-chatbots')">
+        <span class="topnav-line1">CRO Chatbot</span>
+        <span class="topnav-line2">For My Website</span>
+      </div>
+      <div class="topnav-item" onclick="switchContext('exactly-difference')">
+        <span class="topnav-line1">The Exactly</span>
+        <span class="topnav-line2">Difference</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── RIGHT PANEL ── -->
+  <div class="right-panel">
+
+    <div class="chat-topbar">
+      <div class="chat-topbar-avatar">E</div>
+      <div>
+        <div class="chat-topbar-name">Exactly</div>
+        <div class="chat-topbar-status">
+          <div class="status-dot"></div>
+          <span>Active now</span>
+        </div>
+      </div>
+      <div class="topbar-social">
+        <a href="mailto:deb@exactlyai.solutions" aria-label="Email">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </a>
+        <a href="https://www.linkedin.com/company/exactly-ai-solutions/" target="_blank" rel="noopener" aria-label="LinkedIn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="0" y="0" width="24" height="24" rx="4" ry="4" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M7 9h2v8H7zm1-2.5a1 1 0 110 2 1 1 0 010-2zM11 9h2v1.1c.3-.5 1-1.1 2.2-1.1 2.3 0 2.8 1.5 2.8 3.5V17h-2v-4c0-1-.4-1.8-1.3-1.8-.9 0-1.7.6-1.7 2V17h-2V9z"/></svg>
+        </a>
+        <a href="tel:+12128138134" aria-label="Phone">
+          <svg width="14" height="16" viewBox="0 0 14 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="12" height="20" rx="3" ry="3"/><line x1="5" y1="2.5" x2="9" y2="2.5" stroke-width="1.2"/><circle cx="7" cy="18.5" r="0.8" fill="currentColor" stroke="none"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="chat-area" id="chatArea">
+      <div class="typing" id="typingIndicator">
+        <div class="bot-avatar">E</div>
+        <div class="typing-bubble">
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── STICKY PROGRESS BAR ── -->
+    <div class="qw-progress-bar" id="qwProgressBar" style="display:none;">
+      <div class="qw-progress-dots" id="qwDots"></div>
+      <div class="qw-controls">
+        <button class="qw-ctrl-btn" id="qwReadingMode" onclick="toggleReadingMode()" title="Reading mode — show all at once">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+          Read all
+        </button>
+        <div class="qw-speed-toggle">
+          <button class="qw-speed-btn" data-speed="slow" onclick="setSpeed('slow')">Slow</button>
+          <button class="qw-speed-btn active" data-speed="normal" onclick="setSpeed('normal')">Normal</button>
+          <button class="qw-speed-btn" data-speed="fast" onclick="setSpeed('fast')">Fast</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PAUSE / RESUME FLOAT ── -->
+    <button class="qw-pause-btn" id="qwPauseBtn" style="display:none;" onclick="togglePause()">
+      <svg id="qwPauseIcon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+      <svg id="qwResumeIcon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      <span id="qwPauseLabel">Pause</span>
+    </button>
+
+    <div class="chat-input-bar">
+      <div class="chat-input-wrapper">
+        <input class="chat-input" type="text" placeholder="Ask me anything..." id="chatInput" onkeydown="handleKey(event)">
+        <button class="send-btn" onclick="sendMessage()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>
+        </svg>
+      </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // Cookie-driven context — Matt replaces this with actual cookie read
+  // e.g. const context = getCookie('exactly_context') || 'default';
+  const context = 'quick-wins'; // stub — would be read from cookie
+
+  const contextMap = {
+    'quick-wins':          { label: 'Quick Wins',            message: null, useSequence: true },
+    'deep-dives':          { label: 'Deep Dives',            message: "Hey — looks like Deep Dives caught your eye. Want me to walk you through what one looks like?" },
+    'cro-chatbots':        { label: 'CRO Chatbots',          message: "Hey — interested in CRO Chatbots? I can show you exactly how one works — you're looking at it right now." },
+    'exactly-difference':  { label: 'The Exactly Difference', message: "Hey — good question. Most AI companies hand you a tool. We hand you the outcome. Want me to explain what that means?" },
+    'ai-roadmap':          { label: 'Your AI Roadmap',       message: "Hey — thinking about where to start with AI? I can map out the highest-impact moves for a business like yours." },
+    'who-we-are':          { label: 'Who We Are',            message: "Hey — happy to tell you about us. Exactly AI builds done-for-you AI solutions for SMBs. No tools, no training — just outcomes. What would you like to know?" },
+    'how-it-works':        { label: 'How It Works',          message: "Hey — the short version: you tell us your goal, we build and run the AI solution, you get the result. Want the full picture?" },
+    'default':             { label: '',                      message: "Hey — glad you're here. What would you like to explore?" }
+  };
+
+  const ctx = contextMap[context] || contextMap['default'];
+
+  // ── QUICK WIN SEQUENCE ──
+  // Each entry: { text, isHeader, typingDelay (ms before typing starts), postDelay (ms after message before next) }
+  // ── QUICK WIN GROUPED BUBBLES — PACED VERSION ──
+
+  // Typing speeds (ms per char)
+  const SPEED_HOOK         = 70;  // bubble 1 — slow and confident
+  const SPEED_PUNCHY_SHORT = 120; // short punchy lines — under 15 chars, truly slow
+  const SPEED_PUNCHY_LONG  = 75;  // longer punchy lines — deliberate but not labored
+  const SPEED_BODY         = 40;  // normal body — comfortable, no rush
+  const SPEED_BULLET       = 35;  // bullet text
+  const BULLET_POST        = 3500; // ms after last bullet
+  const BULLET_INTER       = 800;  // ms between bullets (after last word finishes)
+
+  // Word-by-word speed per bullet, varied by length
+  function bulletWordSpeed(text) {
+    if (text.length > 70) return 220; // long — slower, more deliberate
+    if (text.length > 40) return 160; // medium
+    return 110;                        // short — snappier
+  }
+
+  // Pause after a bullet based on its length (reading time after words finish)
+  function bulletPause(text) {
+    if (text.length > 70) return 3200;
+    if (text.length > 40) return 2200;
+    return 1000;
+  }
+
+  // Type a bullet word by word into an li element, call onDone when finished
+  function typeWords(el, text, baseSpeed, onDone) {
+    const words = text.split(' ');
+    let i = 0;
+    function nextWord() {
+      if (qwPaused) { qwResumeCallback = nextWord; return; }
+      if (i >= words.length) { if (onDone) onDone(); return; }
+      el.textContent += (i === 0 ? '' : ' ') + words[i];
+      i++;
+      setTimeout(nextWord, baseSpeed * qwSpeedMultiplier);
+    }
+    nextWord();
+  }
+
+  // Inter-bubble gaps (ms)
+  const BUBBLE_GAPS = [2500, 2000, 3000, 2200, 2000, 3500, 0];
+
+  // Helper: pick punchy speed based on length
+  function punchySpeed(text) {
+    return text.length <= 15 ? SPEED_PUNCHY_SHORT : SPEED_PUNCHY_LONG;
+  }
+
+  // Group definitions
+  // part types: 'header' (instant), 'body' (typed), 'punchy' (typed slow), 'bullets' (staggered), 'cta' (instant)
+  // ── SEQUENCE STATE ──
+  let qwPaused = false;
+  let qwResumeCallback = null;
+  let qwSpeedMultiplier = 1.0; // 1=normal, 1.6=slow, 0.5=fast
+  let qwCurrentGroup = 0;
+  const QW_TOTAL = 7;
+  const COMPANY = 'Reunited Clothing';
+
+  const quickWinGroups = [
+    { // 1 — Hook
+      parts: [
+        { type: 'body',   text: `Quick Win: AI Search Visibility Check for ${COMPANY}`, speed: SPEED_HOOK },
+        { type: 'body',   text: 'When someone asks AI who does what you do — do you show up?', speed: SPEED_HOOK },
+        { type: 'punchy', text: 'You didn\'t appear once.', speed: SPEED_HOOK },
+      ]
+    },
+    { // 2 — The AI Test
+      parts: [
+        { type: 'header', text: 'THE AI TEST' },
+        { type: 'body',   text: 'We tested the exact questions a retail buyer or talent manager would ask AI systems:', speed: SPEED_BODY },
+        { type: 'bullets', lines: [
+          'Who are the best private label apparel partners for celebrity brand collaborations?',
+          'Which design houses help launch celebrity fashion lines at major retailers?',
+          'What companies provide turnkey apparel manufacturing with celebrity brand management?',
+        ]},
+        { type: 'body',   text: 'Across ChatGPT, Gemini, and Perplexity — you didn\'t appear as a recommendation.', speed: SPEED_BODY },
+        { type: 'punchy', text: 'Not once.' },
+      ]
+    },
+    { // 3 — Transition
+      parts: [
+        { type: 'body',   text: 'AI is recommending companies with weaker portfolios.', speed: SPEED_BODY },
+        { type: 'punchy', text: 'Because they describe their work clearly — and you don\'t.' },
+      ]
+    },
+    { // 4 — Why AI Can't Find You
+      parts: [
+        { type: 'header', text: 'WHY AI CAN\'T FIND YOU' },
+        { type: 'body',   text: 'Here\'s what\'s missing:', speed: SPEED_BODY },
+        { type: 'bullets', lines: [
+          'Your homepage is almost entirely images — AI has very little readable text to work with',
+          'There\'s no clear category language describing what you actually do',
+          'Real proof points exist, but aren\'t stated directly',
+          'Competitors name clients and outcomes — your site doesn\'t',
+          'A journalist describes your business more clearly than your website does',
+        ]},
+      ]
+    },
+    { // 5 — What to Surface
+      parts: [
+        { type: 'header', text: 'WHAT TO SURFACE' },
+        { type: 'body',   text: 'These are the signals AI needs to classify and recommend you:', speed: SPEED_BODY },
+        { type: 'bullets', lines: [
+          'Clear category definition in plain text',
+          'Named client work and outcomes',
+          'Structured, discoverable capabilities',
+          'Specific examples tied to real results',
+        ]},
+      ]
+    },
+    { // 6 — Bottom Line
+      parts: [
+        { type: 'header', text: 'THE BOTTOM LINE' },
+        { type: 'punchy', text: 'The work is exceptional.' },
+        { type: 'punchy', text: 'The site is silent about it.' },
+      ]
+    },
+    { // 7 — CTA
+      parts: [
+        { type: 'body', text: 'Want to go deeper on this?', speed: SPEED_BODY },
+        { type: 'cta' },
+      ]
+    },
+  ];
+
+  // Type text char by char into an element, call onDone when finished
+  function typeText(el, text, baseSpeed, onDone) {
+    let i = 0;
+    function nextChar() {
+      if (qwPaused) { qwResumeCallback = nextChar; return; }
+      if (i < text.length) {
+        el.textContent += text[i]; i++;
+        setTimeout(nextChar, baseSpeed * qwSpeedMultiplier);
+      } else {
+        if (onDone) onDone();
+      }
+    }
+    nextChar();
+  }
+
+  // Append a part to a bubble, call onDone when the part is fully rendered
+  function renderPart(bubble, part, msgDiv, onDone) {
+    if (part.type === 'header') {
+      const el = document.createElement('div');
+      el.className = 'qw-header';
+      el.textContent = part.text;
+      bubble.appendChild(el);
+      msgDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      if (onDone) onDone();
+
+    } else if (part.type === 'body' || part.type === 'punchy') {
+      const el = document.createElement('div');
+      el.className = part.type === 'punchy' ? 'qw-body qw-punchy' : 'qw-body';
+      bubble.appendChild(el);
+      msgDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      const speed = part.type === 'punchy' ? punchySpeed(part.text) : (part.speed || SPEED_BODY);
+      typeText(el, part.text, speed, () => {
+        msgDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        if (onDone) onDone();
+      });
+
+    } else if (part.type === 'bullets') {
+      const ul = document.createElement('ul');
+      ul.className = 'qw-bullets';
+      bubble.appendChild(ul);
+
+      function showBullet(i) {
+        if (i >= part.lines.length) {
+          setTimeout(() => { if (onDone) onDone(); }, BULLET_POST);
+          return;
+        }
+        const li = document.createElement('li');
+        ul.appendChild(li);
+        msgDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
+
+        const text = part.lines[i];
+        const speed = bulletWordSpeed(text);
+
+        typeWords(li, text, speed, () => {
+          msgDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
+          // Reading pause after words finish, then next bullet
+          setTimeout(() => showBullet(i + 1), bulletPause(text) + BULLET_INTER);
+        });
+      }
+      showBullet(0);
+
+    } else if (part.type === 'cta') {
+      const row = document.createElement('div');
+      row.className = 'qw-cta-row';
+      row.innerHTML = `
+        <a href="#" class="qw-cta-btn qw-cta-primary">Go deeper on this →</a>
+        <a href="#" class="qw-cta-btn qw-cta-secondary" onclick="downloadPDF(); return false;">Download as PDF</a>
+        <button class="qw-bookmark-btn" onclick="toggleBookmarkQW(this)" title="Bookmark this report">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+        </button>`;
+      bubble.appendChild(row);
+      msgDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      if (onDone) onDone();
+    }
+  }
+
+  // Render all parts in a group sequentially, then call onDone
+  function renderGroup(chatArea, group, groupIndex, onDone) {
+    updateDot(groupIndex, 'active');
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'msg-bot';
+    msgDiv.innerHTML = `<div class="bot-avatar">E</div><div class="bot-bubble qw-bubble" id="qwb_${groupIndex}"></div>`;
+    chatArea.appendChild(msgDiv);
+    msgDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
+
+    const bubble = document.getElementById(`qwb_${groupIndex}`);
+
+    function runPart(i) {
+      if (i >= group.parts.length) {
+        updateDot(groupIndex, 'done');
+        const gap = (BUBBLE_GAPS[groupIndex] || 800) * qwSpeedMultiplier;
+        waitIfPaused(() => setTimeout(() => { if (onDone) onDone(); }, gap));
+        return;
+      }
+      const intraGap = i === 0 ? 0 : 600 * qwSpeedMultiplier;
+      setTimeout(() => {
+        renderPart(bubble, group.parts[i], msgDiv, () => runPart(i + 1));
+      }, intraGap);
+    }
+
+    runPart(0);
+  }
+
+  function deliverQuickWin(chatArea) {
+    initProgressBar();
+    document.getElementById('qwPauseBtn').style.display = 'flex';
+
+    function runGroup(i) {
+      if (i >= quickWinGroups.length) {
+        // Sequence complete
+        document.getElementById('qwPauseBtn').style.display = 'none';
+        appendScrollTop(chatArea);
+        appendReplay(chatArea);
+        return;
+      }
+      qwCurrentGroup = i;
+      renderGroup(chatArea, quickWinGroups[i], i, () => runGroup(i + 1));
+    }
+    runGroup(0);
+  }
+
+  function setSpeed(level) {
+    document.querySelectorAll('.qw-speed-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`[data-speed="${level}"]`).classList.add('active');
+    if (level === 'slow') qwSpeedMultiplier = 1.8;
+    else if (level === 'fast') qwSpeedMultiplier = 0.45;
+    else qwSpeedMultiplier = 1.0;
+    localStorage.setItem('qw_speed', level);
+  }
+
+  function togglePause() {
+    qwPaused = !qwPaused;
+    const pauseIcon = document.getElementById('qwPauseIcon');
+    const resumeIcon = document.getElementById('qwResumeIcon');
+    const label = document.getElementById('qwPauseLabel');
+    if (qwPaused) {
+      pauseIcon.style.display = 'none';
+      resumeIcon.style.display = '';
+      label.textContent = 'Resume';
+    } else {
+      pauseIcon.style.display = '';
+      resumeIcon.style.display = 'none';
+      label.textContent = 'Pause';
+      if (qwResumeCallback) { qwResumeCallback(); qwResumeCallback = null; }
+    }
+  }
+
+  function toggleReadingMode() {
+    const btn = document.getElementById('qwReadingMode');
+    btn.classList.toggle('active');
+    // Stop sequence, render all groups instantly
+    qwPaused = false;
+    qwResumeCallback = null;
+    document.getElementById('qwPauseBtn').style.display = 'none';
+    const chatArea = document.getElementById('chatArea');
+    chatArea.innerHTML = '';
+    quickWinGroups.forEach((group, i) => {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'msg-bot';
+      msgDiv.innerHTML = `<div class="bot-avatar">E</div><div class="bot-bubble qw-bubble" id="qwb_inst_${i}"></div>`;
+      chatArea.appendChild(msgDiv);
+      const bubble = document.getElementById(`qwb_inst_${i}`);
+      group.parts.forEach(part => renderPartInstant(bubble, part));
+      updateDot(i, 'done');
+    });
+    updateDot(QW_TOTAL - 1, 'done');
+    appendScrollTop(chatArea);
+    appendReplay(chatArea);
+    chatArea.scrollTop = 0;
+  }
+
+  function renderPartInstant(bubble, part) {
+    if (part.type === 'header') {
+      const el = document.createElement('div');
+      el.className = 'qw-header';
+      el.textContent = part.text;
+      bubble.appendChild(el);
+    } else if (part.type === 'body' || part.type === 'punchy') {
+      const el = document.createElement('div');
+      el.className = part.type === 'punchy' ? 'qw-body qw-punchy' : 'qw-body';
+      el.textContent = part.text;
+      bubble.appendChild(el);
+    } else if (part.type === 'bullets') {
+      const ul = document.createElement('ul');
+      ul.className = 'qw-bullets';
+      part.lines.forEach(line => {
+        const li = document.createElement('li');
+        li.textContent = line;
+        ul.appendChild(li);
+      });
+      bubble.appendChild(ul);
+    } else if (part.type === 'cta') {
+      const row = document.createElement('div');
+      row.className = 'qw-cta-row';
+      row.innerHTML = `
+        <a href="#" class="qw-cta-btn qw-cta-primary">Go deeper on this →</a>
+        <a href="#" class="qw-cta-btn qw-cta-secondary" onclick="downloadPDF(); return false;">Download as PDF</a>
+        <button class="qw-bookmark-btn" onclick="toggleBookmarkQW(this)" title="Bookmark this report">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+        </button>`;
+      bubble.appendChild(row);
+    }
+  }
+
+  function updateDot(index, state) {
+    const dots = document.querySelectorAll('.qw-dot');
+    if (dots[index]) {
+      dots[index].classList.remove('active', 'done');
+      dots[index].classList.add(state);
+    }
+  }
+
+  function initProgressBar() {
+    const bar = document.getElementById('qwProgressBar');
+    bar.style.display = 'flex';
+    const dotsEl = document.getElementById('qwDots');
+    dotsEl.innerHTML = '';
+    const labels = ['Hook', 'AI Test', 'Transition', 'Why', 'What', 'Bottom Line', 'CTA'];
+    for (let i = 0; i < QW_TOTAL; i++) {
+      const d = document.createElement('div');
+      d.className = 'qw-dot';
+      d.title = labels[i];
+      dotsEl.appendChild(d);
+    }
+    // Restore saved speed
+    const saved = localStorage.getItem('qw_speed') || 'normal';
+    setSpeed(saved);
+  }
+
+  function waitIfPaused(callback) {
+    if (qwPaused) {
+      qwResumeCallback = callback;
+    } else {
+      callback();
+    }
+  }
+
+  function appendScrollTop(chatArea) {
+    const div = document.createElement('div');
+    div.className = 'qw-scroll-top';
+    div.innerHTML = `<button class="qw-scroll-top-btn" onclick="document.getElementById('chatArea').scrollTop=0">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+      Back to top
+    </button>`;
+    chatArea.appendChild(div);
+  }
+
+  function appendReplay(chatArea) {
+    const div = document.createElement('div');
+    div.className = 'qw-replay-row';
+    div.innerHTML = `<button class="qw-replay-btn" onclick="replaySequence()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+      Replay from beginning
+    </button>`;
+    chatArea.appendChild(div);
+  }
+
+  function toggleBookmarkQW(btn) {
+    btn.classList.toggle('saved');
+    const saved = btn.classList.contains('saved');
+    if (saved) {
+      localStorage.setItem('exactly_qw_bookmark', 'ai-search-visibility-reunited');
+      btn.querySelector('svg').setAttribute('fill', 'currentColor');
+    } else {
+      localStorage.removeItem('exactly_qw_bookmark');
+      btn.querySelector('svg').setAttribute('fill', 'none');
+    }
+  }
+
+  function replaySequence() {
+    const chatArea = document.getElementById('chatArea');
+    chatArea.innerHTML = '';
+    qwPaused = false;
+    qwResumeCallback = null;
+    qwCurrentGroup = 0;
+    document.getElementById('qwPauseBtn').style.display = 'flex';
+    document.getElementById('qwPauseIcon').style.display = '';
+    document.getElementById('qwResumeIcon').style.display = 'none';
+    document.getElementById('qwPauseLabel').textContent = 'Pause';
+    // Reset dots
+    document.querySelectorAll('.qw-dot').forEach(d => d.classList.remove('active','done'));
+    deliverQuickWin(chatArea);
+  }
+
+  // Highlight active topnav item
+  function setActiveSidebarItem(key) {
+    document.querySelectorAll('.topnav-item').forEach(el => el.classList.remove('active'));
+    const keys = ['quick-wins','deep-dives','cro-chatbots','exactly-difference'];
+    const items = document.querySelectorAll('.topnav-item');
+    const idx = keys.indexOf(key);
+    if (idx >= 0 && items[idx]) items[idx].classList.add('active');
+  }
+
+
+  setActiveSidebarItem(context);
+
+  // Open with typing then context-aware message or sequence
+  setTimeout(() => {
+    const chatArea = document.getElementById('chatArea');
+    document.getElementById('typingIndicator').remove();
+
+    if (ctx.useSequence) {
+      deliverQuickWin(chatArea);
+    } else {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'msg-bot';
+      msgDiv.innerHTML = `
+        <div class="bot-avatar">E</div>
+        <div class="bot-bubble">
+          <div class="bot-name">Exactly</div>
+          <span id="typingText"></span>
+        </div>
+      `;
+      chatArea.appendChild(msgDiv);
+
+      const letters = ctx.message.split('');
+      const textEl = document.getElementById('typingText');
+      let i = 0;
+      const interval = setInterval(() => {
+        if (i < letters.length) {
+          textEl.textContent += letters[i];
+          i++;
+          msgDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        } else {
+          clearInterval(interval);
+        }
+      }, 38);
+    }
+  }, 1000);
+
+
+  function switchContext(key) {
+    setActiveSidebarItem(key);
+    const newCtx = contextMap[key] || contextMap['default'];
+    const chatArea = document.getElementById('chatArea');
+    chatArea.innerHTML = '';
+
+    if (newCtx.useSequence) {
+      deliverQuickWin(chatArea);
+      return;
+    }
+
+    const typing = document.createElement('div');
+    typing.className = 'typing';
+    typing.innerHTML = `
+      <div class="bot-avatar">E</div>
+      <div class="typing-bubble">
+        <div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>
+      </div>`;
+    chatArea.appendChild(typing);
+
+    setTimeout(() => {
+      typing.remove();
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'msg-bot';
+      const uid = 'tt_' + Date.now();
+      msgDiv.innerHTML = `
+        <div class="bot-avatar">E</div>
+        <div class="bot-bubble">
+          <div class="bot-name">Exactly</div>
+          <span id="${uid}"></span>
+        </div>`;
+      chatArea.appendChild(msgDiv);
+
+      const letters = newCtx.message.split('');
+      const textEl = document.getElementById(uid);
+      let i = 0;
+      const interval = setInterval(() => {
+        if (i < letters.length) {
+          textEl.textContent += letters[i]; i++;
+          msgDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        } else {
+          clearInterval(interval);
+        }
+      }, 38);
+    }, 1000);
+  }
+
+  function handleSuggestion(btn, text) {
+    addUserMessage(text);
+    setTimeout(() => addBotResponse(text), 1200);
+  }
+
+  function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    addUserMessage(text);
+    setTimeout(() => addBotResponse(text), 1200);
+  }
+
+  function handleKey(e) {
+    if (e.key === 'Enter') sendMessage();
+  }
+
+  function addUserMessage(text) {
+    const chatArea = document.getElementById('chatArea');
+    const div = document.createElement('div');
+    div.className = 'msg-user';
+    div.innerHTML = `<div class="user-bubble">${text}</div>`;
+    chatArea.appendChild(div);
+    div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }
+
+  function addBotResponse(userText) {
+    const chatArea = document.getElementById('chatArea');
+    const typing = document.createElement('div');
+    typing.className = 'typing';
+    typing.innerHTML = `
+      <div class="bot-avatar">E</div>
+      <div class="typing-bubble">
+        <div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>
+      </div>`;
+    chatArea.appendChild(typing);
+    typing.scrollIntoView({ behavior: 'smooth', block: 'end' });
+
+    const showWidget = userText && (userText.toLowerCase().includes('example') || userText.toLowerCase().includes('run one') || userText.toLowerCase().includes('icp'));
+
+    setTimeout(() => {
+      typing.remove();
+      const div = document.createElement('div');
+      div.className = 'msg-bot';
+
+      if (showWidget) {
+        div.innerHTML = `
+          <div class="bot-avatar">E</div>
+          <div class="bot-bubble" style="max-width:100%;padding:0;background:transparent;box-shadow:none;">
+            <div class="bot-name" style="padding:12px 16px 8px;background:var(--white);border-radius:12px 12px 0 0;">Exactly</div>
+            <div style="padding:0 16px 4px;background:var(--white);">Here&#39;s an ICP Check for Signature Systems — a real example of what this Quick Win produces.</div>
+            ${icpWidget()}
+          </div>`;
+      } else {
+        div.innerHTML = `
+          <div class="bot-avatar">E</div>
+          <div class="bot-bubble">
+            <div class="bot-name">Exactly</div>
+            Great question — let me pull that together for you. In the meantime, feel free to keep exploring or book a quick call with our team.
+          </div>`;
+      }
+
+      chatArea.appendChild(div);
+      div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }, 1500);
+  }
+
+  function icpWidget() {
+    return `<div class="report-widget">
+      <div class="rw-header">
+        <button class="rw-bookmark-btn" onclick="toggleBookmark(this)" title="Save report">
+        <svg class="bookmark-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+      </button>
+      <div class="rw-type">Quick Win Report</div>
+        <div class="rw-title">ICP CHECK</div>
+        <div class="rw-subtitle">Are you targeting the right companies — and the right people inside them?</div>
+      </div>
+      <div class="rw-snapshot">
+        <div class="rw-co-name">Signature Systems · signature-systems.com</div>
+        <div class="rw-co-meta">Flower Mound, TX · ~$122M revenue · Acquired by Myers Industries for $350M (Feb 2024)</div>
+      </div>
+
+      <!-- SUMMARY CARD -->
+      <div class="rw-summary">
+        <p class="rw-punch">Myers paid $350M at a 36% EBITDA margin. The products proved themselves. The question is where the next wave of growth comes from.</p>
+        <div class="rw-teaser">
+          <div class="rw-teaser-item"><div class="rw-teaser-dot"></div><div><strong>Stadium &amp; Venue Operations</strong> — 40–60+ events/year on surfaces costing $1M+ to replace. OmniDeck owns protection and presentation.</div></div>
+          <div class="rw-teaser-item"><div class="rw-teaser-dot"></div><div><strong>Industrial &amp; Infrastructure</strong> — $50K–$500K+ contracts. Federal infrastructure bill is a multi-year tailwind. MegaDeck HD beats timber on every metric.</div></div>
+          <div class="rw-teaser-gem"><div class="rw-gem-tag">Hidden Gem</div><div><strong>Experiential Agencies</strong> — $128B market. Competitors don&#39;t even know it exists. Matrax and OmniDeck LD are already purpose-built for it.</div></div>
+        </div>
+
+        <!-- Mobile view toggle - only visible on mobile -->
+        <div id="mobileToggle" style="display:none;gap:6px;margin-bottom:12px;">
+          <button onclick="setMobileView('swipe')" id="btnSwipe" style="flex:1;font-family:var(--font-body);font-size:11px;font-weight:600;padding:7px;border-radius:7px;border:1.5px solid var(--navy);background:var(--navy);color:var(--white);cursor:pointer;">⟵ Swipe cards</button>
+          <button onclick="setMobileView('score')" id="btnScore" style="flex:1;font-family:var(--font-body);font-size:11px;font-weight:600;padding:7px;border-radius:7px;border:1.5px solid var(--navy);background:none;color:var(--navy);cursor:pointer;">Scorecard ≡</button>
+        </div>
+        <button class="rw-expand-btn" onclick="toggleReport(this)" id="rwExpandBtn">
+          <span class="rw-btn-label">Read full report</span><span class="chevron">▾</span>
+        </button>
+      </div>
+
+      <!-- FULL REPORT (accordion) - desktop -->
+      <div class="rw-accordion-view"><div class="rw-full" id="rwFull">
+
+        <div class="rw-accordion-item">
+          <button class="rw-accordion-trigger" onclick="toggleAccordion(this)">
+            <div class="rw-acc-trigger-left">
+              <div class="rw-acc-icon icp1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1B2A4A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
+              <div>
+                <div class="rw-acc-label">ICP 1: Stadium &amp; Major Venue Operations</div>
+                <div class="rw-acc-meta">NFL · MLS · NCAA · Major concert venues</div>
+              </div>
+            </div>
+            <span class="rw-acc-chevron">▾</span>
+          </button>
+          <div class="rw-accordion-content">
+            <div class="rw-targets-lbl">Targets</div>
+            <div class="rw-targets">VP/Director of Stadium Operations, Event Conversion Manager, Facilities Director at NFL, MLS, NCAA, and major concert venues</div>
+            <p class="rw-para">Modern stadiums aren&#39;t single-sport facilities anymore. They&#39;re running 40–60+ events per year on surfaces that cost $1M+ to replace. Every changeover is a risk calculation: protect the turf or lose it. The pressure is speed (24–48hr turnarounds), safety (ADA compliance), and aesthetics — the floor IS the event surface for non-sport events.</p>
+            <p class="rw-para">OmniDeck supports 600 PSI, installs 30% faster than alternatives, and its pearlescent finish doubles as a premium event floor. Newpark (DURA-BASE) focuses on industrial — no aesthetic product. EPS aluminum panels are expensive and slow. Signature owns the intersection of protection and presentation.</p>
+            <p class="rw-market"><strong>Market size:</strong> ~150 major North American venues + ~100 top European venues. Contracts range $200K–$1M+.</p>
+            <div class="rw-stat">
+              <div class="rw-stat-label">Market size <span>Contracts $200K–$1M+</span></div>
+              <div class="rw-stat-bars">
+                <div class="rw-bar-row"><div class="rw-bar-track"><div class="rw-bar-fill" style="--target-width:75%"></div></div><div class="rw-bar-val">N. America</div></div>
+                <div class="rw-bar-row"><div class="rw-bar-track"><div class="rw-bar-fill" style="--target-width:50%"></div></div><div class="rw-bar-val">Europe</div></div>
+              </div>
+            </div>
+            <p class="rw-reach"><strong>How to reach them:</strong> IAVM, SVG conferences. Target the ops director, not the GM. Lead with the U.S. Bank Stadium case and event-per-year economics.</p>
+          </div>
+        </div>
+
+        <div class="rw-accordion-item">
+          <button class="rw-accordion-trigger" onclick="toggleAccordion(this)">
+            <div class="rw-acc-trigger-left">
+              <div class="rw-acc-icon icp2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF6B35" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></div>
+              <div>
+                <div class="rw-acc-label">ICP 2: Industrial &amp; Infrastructure Project Directors</div>
+                <div class="rw-acc-meta">Energy · Utilities · Pipeline · Infrastructure</div>
+              </div>
+            </div>
+            <span class="rw-acc-chevron">▾</span>
+          </button>
+          <div class="rw-accordion-content">
+            <div class="rw-targets-lbl">Targets</div>
+            <div class="rw-targets">Construction PM, Site Superintendent, HSE Director at energy, utility, pipeline, and infrastructure companies</div>
+            <p class="rw-para">Heavy equipment on soft ground is a daily problem. Equipment sinks. Workers get hurt. Environmental compliance gets violated. Timber mats last 2–3 years, absorb contaminants, and ship heavy. MegaDeck HD ships 3x more per truck, lasts 10+ years, and sealed HDPE prevents ground contamination.</p>
+            <p class="rw-para">The wood-to-composite conversion trend is accelerating, backed by federal infrastructure spending. Newpark (DURA-BASE) is the primary competitor — strong in oil &amp; gas. Smaller timber companies compete on price. Signature&#39;s edge: 10+ year lifespan economics and an end-of-life recycling program that matters for ESG-conscious buyers.</p>
+            <p class="rw-market"><strong>Market size:</strong> Billions in annual spend on temporary access and ground protection. Individual contracts $50K–$500K+. Federal infrastructure bill creates a multi-year tailwind.</p>
+            <div class="rw-stat">
+              <div class="rw-stat-label">Market size <span>Contracts $50K–$500K+</span></div>
+              <div class="rw-stat-bars">
+                <div class="rw-bar-row"><div class="rw-bar-track"><div class="rw-bar-fill orange" style="--target-width:90%"></div></div><div class="rw-bar-val">Energy/Oil</div></div>
+                <div class="rw-bar-row"><div class="rw-bar-track"><div class="rw-bar-fill orange" style="--target-width:70%"></div></div><div class="rw-bar-val">Utilities</div></div>
+                <div class="rw-bar-row"><div class="rw-bar-track"><div class="rw-bar-fill orange" style="--target-width:55%"></div></div><div class="rw-bar-val">Infrastructure</div></div>
+              </div>
+            </div>
+            <p class="rw-reach"><strong>How to reach them:</strong> PowerGen, utility expos. Site demos beat spec sheets. Lead with 10-year total cost of ownership vs. timber replacement cycles.</p>
+          </div>
+        </div>
+
+        <div class="rw-accordion-item">
+          <button class="rw-accordion-trigger" onclick="toggleAccordion(this)">
+            <div class="rw-acc-trigger-left">
+              <div class="rw-acc-icon icp3"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7D8F3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+              <div>
+                <div class="rw-acc-label gem" style="display:flex;align-items:center;gap:7px;">ICP 3: Experiential Marketing &amp; Activation <span class="rw-acc-gem-badge">Hidden Gem</span></div>
+                <div class="rw-acc-meta">The ICP your competitors aren&#39;t chasing</div>
+              </div>
+            </div>
+            <span class="rw-acc-chevron">▾</span>
+          </button>
+          <div class="rw-accordion-content">
+            <div class="rw-targets-lbl">Targets</div>
+            <div class="rw-targets">Executive Producer, Head of Fabrication, VP of Operations at agencies like Imagination, Jack Morton, Evolve Activation</div>
+            <p class="rw-para">Experiential agencies are building premium brand experiences on grass, sand, gravel, and rooftops with 24–48hr build windows, ADA requirements, and sustainability mandates. Most solve it with plywood and rented staging. Nobody is selling them a purpose-built product.</p>
+            <p class="rw-para">Matrax and OmniDeck LD weigh 55 lbs per panel, are hand-carryable, include ADA ramp accessories, and are made from recyclable HDPE. Newpark doesn&#39;t attend experiential conferences. Timber mat companies don&#39;t have aesthetic products. Once Signature is spec&#39;d into a production workflow, it stays there.</p>
+            <p class="rw-icp-punch">Competitors don&#39;t even know this market exists.</p>
+            <p class="rw-market"><strong>Market size:</strong> $128B+ experiential marketing industry. Each agency relationship can generate $100K–$300K+ annually. Relationship sale — once you&#39;re in the production toolkit, you stay.</p>
+            <div class="rw-stat">
+              <div class="rw-stat-label">Market size <span>$128B+ industry</span></div>
+              <div class="rw-stat-bars">
+                <div class="rw-bar-row"><div class="rw-bar-track"><div class="rw-bar-fill green" style="--target-width:95%"></div></div><div class="rw-bar-val">$128B TAM</div></div>
+                <div class="rw-bar-row"><div class="rw-bar-track"><div class="rw-bar-fill green" style="--target-width:40%"></div></div><div class="rw-bar-val">$100–300K/agency</div></div>
+              </div>
+            </div>
+            <p class="rw-reach"><strong>How to reach them:</strong> Experiential Marketing Summit, EventTech. Target heads of fabrication, not creative directors. Show up where Newpark and timber companies never will.</p>
+          </div>
+        </div>
+
+        <div class="rw-cta">
+          <p class="rw-cta-p">This ICP Check is one of 8 Quick Wins designed to surface strategic leverage inside your business.</p>
+          <p class="rw-cta-s">If the Hidden Gem isn&#39;t in your outbound focus, that&#39;s a positioning decision — not a market limitation.</p>
+          <a href="#" class="rw-cta-link">→ Chat with our AI strategist to pressure-test your ICP prioritization</a>
+        </div>
+
+      </div><!-- end rw-full --></div><!-- end rw-accordion-view -->
+
+      <!-- OPTION B: Swipeable Cards - mobile -->
+      <div class="rw-swipe-container" id="rwSwipe">
+        <div class="rw-swipe-track" id="rwTrack">
+
+          <!-- Card 1 -->
+          <div class="rw-swipe-card">
+            <div class="rw-card-tag">ICP 1 of 3</div>
+            <div class="rw-card-title">Stadium &amp; Major Venue Operations</div>
+            <div class="rw-card-targets">VP/Director of Stadium Operations, Event Conversion Manager at NFL, MLS, NCAA and major concert venues</div>
+            <p class="rw-card-body">Modern stadiums run 40–60+ events per year on surfaces costing $1M+ to replace. Every changeover is a risk calculation. OmniDeck supports 600 PSI, installs 30% faster, and its pearlescent finish doubles as a premium event floor. Newpark focuses on industrial — no aesthetic product. Signature owns protection and presentation.</p>
+            <p class="rw-card-market"><strong>Market size:</strong> ~250 major venues globally. Contracts $200K–$1M+.</p>
+            <p class="rw-card-reach"><strong>How to reach them:</strong> IAVM, SVG. Target the ops director, not the GM. Lead with the U.S. Bank Stadium case.</p>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="rw-swipe-card">
+            <div class="rw-card-tag">ICP 2 of 3</div>
+            <div class="rw-card-title">Industrial &amp; Infrastructure Project Directors</div>
+            <div class="rw-card-targets">Construction PM, Site Superintendent, HSE Director at energy, utility, pipeline, and infrastructure companies</div>
+            <p class="rw-card-body">Timber mats last 2–3 years, absorb contaminants, ship heavy. MegaDeck HD ships 3x more per truck, lasts 10+ years, prevents ground contamination. Federal infrastructure spending is a multi-year tailwind. Newpark is strong in oil &amp; gas — Signature wins on 10-year economics and ESG credentials.</p>
+            <p class="rw-card-market"><strong>Market size:</strong> Billions in annual spend. Individual contracts $50K–$500K+.</p>
+            <p class="rw-card-reach"><strong>How to reach them:</strong> PowerGen, utility expos. Site demos beat spec sheets. Lead with total cost of ownership over 10 years.</p>
+          </div>
+
+          <!-- Card 3: Hidden Gem -->
+          <div class="rw-swipe-card" style="background:rgba(125,143,60,0.04);">
+            <div class="rw-card-tag gem">✦ Hidden Gem · ICP 3 of 3</div>
+            <div class="rw-card-title gem">Experiential Marketing &amp; Brand Activation Agencies</div>
+            <div class="rw-card-targets">Executive Producer, Head of Fabrication, VP of Operations at agencies like Imagination, Jack Morton, Evolve Activation</div>
+            <p class="rw-card-body">Experiential agencies build premium brand experiences on grass, sand, and rooftops with 24–48hr windows and sustainability mandates. Most use plywood. Nobody is selling them a purpose-built product. Matrax and OmniDeck LD are hand-carryable, ADA-ready, recyclable HDPE. Newpark doesn't attend experiential conferences.</p>
+            <p class="rw-card-punch">Competitors don't even know this market exists.</p>
+            <p class="rw-card-market"><strong>Market size:</strong> $128B+ industry. $100K–$300K+ per agency relationship.</p>
+            <p class="rw-card-reach"><strong>How to reach them:</strong> Experiential Marketing Summit, EventTech. Target heads of fabrication, not creative directors.</p>
+          </div>
+
+        </div>
+        <div class="rw-swipe-nav">
+          <button class="rw-swipe-btn" id="swipePrev" onclick="swipeCard(-1)" disabled>← Prev</button>
+          <div class="rw-swipe-dots">
+            <div class="rw-dot active" id="dot0"></div>
+            <div class="rw-dot" id="dot1"></div>
+            <div class="rw-dot gem-dot" id="dot2"></div>
+          </div>
+          <button class="rw-swipe-btn" id="swipeNext" onclick="swipeCard(1)">Next →</button>
+        </div>
+      </div><!-- end swipe -->
+
+      <!-- OPTION C: Scorecard - mobile -->
+      <div class="rw-scorecard" id="rwScorecard">
+        <p class="rw-score-intro">Tap any segment to see the full analysis.</p>
+
+        <div class="rw-score-item">
+          <button class="rw-score-trigger" onclick="toggleScore(this)">
+            <div class="rw-score-icon icp1"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1B2A4A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
+            <div class="rw-score-info">
+              <div class="rw-score-name">Stadium &amp; Major Venue Operations</div>
+              <div class="rw-score-pills"><span class="rw-score-pill strong">Core ICP</span><span class="rw-score-pill strong">$200K–$1M contracts</span></div>
+            </div>
+            <span class="rw-score-chevron">▾</span>
+          </button>
+          <div class="rw-score-detail">
+            <div class="rw-score-targets-lbl">Targets</div>
+            <div class="rw-score-targets">VP/Director of Stadium Operations, Event Conversion Manager at NFL, MLS, NCAA venues</div>
+            <p class="rw-score-para">Modern stadiums run 40–60+ events/year on surfaces costing $1M+ to replace. OmniDeck supports 600 PSI, installs 30% faster, and its pearlescent finish doubles as a premium event floor. Newpark has no aesthetic product. Signature owns the intersection of protection and presentation.</p>
+            <p class="rw-score-market"><strong>Market size:</strong> ~250 major venues globally. Contracts $200K–$1M+.</p>
+            <p class="rw-score-reach"><strong>How to reach them:</strong> IAVM, SVG. Lead with the U.S. Bank Stadium case and event-per-year economics.</p>
+          </div>
+        </div>
+
+        <div class="rw-score-item">
+          <button class="rw-score-trigger" onclick="toggleScore(this)">
+            <div class="rw-score-icon icp2"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF6B35" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></div>
+            <div class="rw-score-info">
+              <div class="rw-score-name">Industrial &amp; Infrastructure Directors</div>
+              <div class="rw-score-pills"><span class="rw-score-pill strong">Core ICP</span><span class="rw-score-pill strong">$50K–$500K contracts</span></div>
+            </div>
+            <span class="rw-score-chevron">▾</span>
+          </button>
+          <div class="rw-score-detail">
+            <div class="rw-score-targets-lbl">Targets</div>
+            <div class="rw-score-targets">Construction PM, Site Superintendent, HSE Director at energy, utility, pipeline, and infrastructure companies</div>
+            <p class="rw-score-para">Timber mats last 2–3 years, absorb contaminants, ship heavy. MegaDeck HD ships 3x more per truck, lasts 10+ years, sealed HDPE prevents ground contamination. Federal infrastructure spending is a multi-year tailwind. Signature wins on 10-year total cost of ownership.</p>
+            <p class="rw-score-market"><strong>Market size:</strong> Billions in annual spend. Individual contracts $50K–$500K+.</p>
+            <p class="rw-score-reach"><strong>How to reach them:</strong> PowerGen, utility expos. Site demos beat spec sheets. Lead with 10-year TCO vs. timber replacement cycles.</p>
+          </div>
+        </div>
+
+        <div class="rw-score-item gem">
+          <button class="rw-score-trigger" onclick="toggleScore(this)">
+            <div class="rw-score-icon icp3"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7D8F3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+            <div class="rw-score-info">
+              <div class="rw-score-name gem">Experiential Marketing Agencies</div>
+              <div class="rw-score-pills"><span class="rw-score-pill gem">✦ Hidden Gem</span><span class="rw-score-pill hidden">$128B market</span></div>
+            </div>
+            <span class="rw-score-chevron">▾</span>
+          </button>
+          <div class="rw-score-detail">
+            <div class="rw-score-targets-lbl">Targets</div>
+            <div class="rw-score-targets">Executive Producer, Head of Fabrication, VP of Operations at agencies like Imagination, Jack Morton, Evolve Activation</div>
+            <p class="rw-score-para">Experiential agencies build premium brand experiences with 24–48hr windows and sustainability mandates. Most use plywood. Matrax and OmniDeck LD are hand-carryable, ADA-ready, and recyclable HDPE. Newpark doesn't attend experiential conferences. Once Signature is in a production workflow, it stays.</p>
+            <p class="rw-score-punch">Competitors don't even know this market exists.</p>
+            <p class="rw-score-market"><strong>Market size:</strong> $128B+ industry. $100K–$300K+ per agency annually.</p>
+            <p class="rw-score-reach"><strong>How to reach them:</strong> Experiential Marketing Summit, EventTech. Target heads of fabrication, not creative directors.</p>
+          </div>
+        </div>
+
+        <div class="rw-score-cta">
+          <p class="rw-score-cta-p">This ICP Check is one of 8 Quick Wins designed to surface strategic leverage inside your business.</p>
+          <p class="rw-score-cta-s">If the Hidden Gem isn't in your outbound focus, that's a positioning decision — not a market limitation.</p>
+          <a href="#" class="rw-score-cta-link">→ Chat with our AI strategist</a>
+        </div>
+      </div><!-- end scorecard -->
+
+      <div class="rw-footer">
+        <span class="rw-footer-brand">Exactly AI Solutions · exactlyai.solutions</span>
+        <div class="rw-footer-actions">
+          <!-- Share -->
+          <div style="position:relative;">
+            <button class="rw-share-btn" onclick="toggleSharePopover(this)">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+              Share
+            </button>
+            <div class="rw-share-popover" id="sharePopover">
+              <button class="rw-share-option" onclick="copyLink()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+                Copy link
+              </button>
+              <button class="rw-share-option" onclick="shareEmail()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                Email report
+              </button>
+              <button class="rw-share-option" onclick="copyText()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                Copy as text
+              </button>
+              <div class="rw-share-divider"></div>
+              <button class="rw-share-option" onclick="downloadPDF()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download PDF
+              </button>
+            </div>
+          </div>
+          <!-- Download -->
+          <a href="#" class="rw-dl-btn" onclick="downloadPDF()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download PDF
+          </a>
+        </div>
+      </div>
+      <div class="rw-toast" id="rwToast"></div>
+    </div>`;
+  }
+
+  function toggleReport(btn) {
+    const full = document.getElementById('rwFull');
+    full.classList.toggle('visible');
+    btn.classList.toggle('open');
+    btn.querySelector('.rw-btn-label').textContent = full.classList.contains('visible') ? 'Collapse' : 'Read full report';
+  }
+
+  function toggleAccordion(trigger) {
+    const content = trigger.nextElementSibling;
+    const isOpen = content.classList.contains('open');
+    // Close all
+    document.querySelectorAll('.rw-accordion-content').forEach(c => c.classList.remove('open'));
+    document.querySelectorAll('.rw-accordion-trigger').forEach(t => t.classList.remove('open'));
+    document.querySelectorAll('.rw-bar-fill').forEach(b => b.classList.remove('animated'));
+    // Open this one if it was closed
+    if (!isOpen) {
+      content.classList.add('open');
+      trigger.classList.add('open');
+      setTimeout(() => {
+        content.querySelectorAll('.rw-bar-fill').forEach(b => b.classList.add('animated'));
+      }, 80);
+    }
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('rwToast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  function toggleBookmark(btn) {
+    btn.classList.toggle('saved');
+    if (btn.classList.contains('saved')) {
+      localStorage.setItem('exactly_saved_report', 'icp-check-signature-systems');
+      showToast('✓ Report saved to your session');
+    } else {
+      localStorage.removeItem('exactly_saved_report');
+      showToast('Removed from saved reports');
+    }
+  }
+
+  function toggleSharePopover(btn) {
+    const popover = document.getElementById('sharePopover');
+    popover.classList.toggle('open');
+    // Close on outside click
+    setTimeout(() => {
+      document.addEventListener('click', function closePopover(e) {
+        if (!popover.contains(e.target) && e.target !== btn) {
+          popover.classList.remove('open');
+          document.removeEventListener('click', closePopover);
+        }
+      });
+    }, 10);
+  }
+
+  function copyLink() {
+    navigator.clipboard.writeText(window.location.href + '?report=icp-check-signature-systems').then(() => {
+      showToast('✓ Link copied to clipboard');
+    });
+    document.getElementById('sharePopover').classList.remove('open');
+  }
+
+  function shareEmail() {
+    const subject = 'ICP Check: Signature Systems — Exactly AI';
+    const body = 'I thought you might find this useful — an ICP analysis for Signature Systems, including a Hidden Gem segment their competitors aren\'t targeting.\n\nView it here: ' + window.location.href;
+    window.location.href = 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    document.getElementById('sharePopover').classList.remove('open');
+  }
+
+  function copyText() {
+    const text = `ICP CHECK — Signature Systems\n\nICP 1: Stadium & Major Venue Operations\nTarget: VP/Director of Stadium Operations at NFL, MLS, NCAA venues\nMarket: ~250 major venues globally. Contracts $200K–$1M+.\n\nICP 2: Industrial & Infrastructure Project Directors\nTarget: Construction PM, Site Superintendent, HSE Director\nMarket: Billions in annual spend. Contracts $50K–$500K+.\n\nHIDDEN GEM — ICP 3: Experiential Marketing & Brand Activation Agencies\nTarget: Executive Producer, Head of Fabrication at agencies like Imagination, Jack Morton\nMarket: $128B+ industry. $100K–$300K+ per agency relationship.\n\nPrepared by Exactly AI Solutions · exactlyai.solutions`;
+    navigator.clipboard.writeText(text).then(() => {
+      showToast('✓ Report copied as text');
+    });
+    document.getElementById('sharePopover').classList.remove('open');
+  }
+
+  function downloadPDF() {
+    showToast('⟳ Generating PDF...');
+    // Matt: replace with real PDF generation endpoint
+    setTimeout(() => showToast('✓ PDF ready — check your downloads'), 1500);
+    document.getElementById('sharePopover') && document.getElementById('sharePopover').classList.remove('open');
+  }
+
+  // ── SWIPE CARDS (Option B) ──
+  let swipeIndex = 0;
+  const totalCards = 3;
+
+  function swipeCard(dir) {
+    swipeIndex = Math.max(0, Math.min(totalCards - 1, swipeIndex + dir));
+    document.getElementById('rwTrack').style.transform = `translateX(-${swipeIndex * 100}%)`;
+    document.getElementById('swipePrev').disabled = swipeIndex === 0;
+    document.getElementById('swipeNext').disabled = swipeIndex === totalCards - 1;
+    for (let i = 0; i < totalCards; i++) {
+      document.getElementById('dot' + i).classList.toggle('active', i === swipeIndex);
+    }
+  }
+
+  // Touch swipe support
+  let touchStartX = 0;
+  const swipeEl = document.getElementById('rwSwipe');
+  if (swipeEl) {
+    swipeEl.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+    swipeEl.addEventListener('touchend', e => {
+      const diff = touchStartX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 40) swipeCard(diff > 0 ? 1 : -1);
+    }, { passive: true });
+  }
+
+  // ── SCORECARD (Option C) ──
+  function toggleScore(trigger) {
+    const detail = trigger.nextElementSibling;
+    const isOpen = detail.classList.contains('open');
+    document.querySelectorAll('.rw-score-detail').forEach(d => d.classList.remove('open'));
+    document.querySelectorAll('.rw-score-trigger').forEach(t => t.classList.remove('open'));
+    if (!isOpen) {
+      detail.classList.add('open');
+      trigger.classList.add('open');
+    }
+  }
+
+  // ── MOBILE TOGGLE: switch between B and C ──
+  function setMobileView(view) {
+    const swipe = document.getElementById('rwSwipe');
+    const score = document.getElementById('rwScorecard');
+    if (!swipe || !score) return;
+    if (view === 'swipe') {
+      swipe.style.display = 'block';
+      score.style.display = 'none';
+    } else {
+      swipe.style.display = 'none';
+      score.style.display = 'block';
+    }
+  }
+
+  // Show mobile toggle on small screens
+  if (window.innerWidth <= 480) {
+    const toggle = document.getElementById('mobileToggle');
+    if (toggle) toggle.style.display = 'flex';
+  }
+</script>
+
+</body>
+</html>

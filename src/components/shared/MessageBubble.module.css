@@ -48,6 +48,43 @@
   color: var(--black);
 }
 
+.botText ol,
+.botText ul {
+  padding-left: 1.4em;
+  margin: 6px 0;
+}
+
+.botText li {
+  margin-bottom: 4px;
+}
+
+.botText p {
+  margin-bottom: 8px;
+}
+
+.botText p:last-child {
+  margin-bottom: 0;
+}
+
+.botText table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 8px 0;
+  font-size: 14px;
+}
+
+.botText th,
+.botText td {
+  border: 1px solid rgba(0,0,0,0.15);
+  padding: 6px 10px;
+  text-align: left;
+}
+
+.botText th {
+  background: rgba(0,0,0,0.06);
+  font-weight: 600;
+}
+
 .userRow {
   display: flex;
   justify-content: flex-end;
