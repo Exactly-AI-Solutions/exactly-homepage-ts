@@ -5,7 +5,11 @@ export interface Message {
   id: string;
   role: 'user' | 'bot';
   text: string;
-  displayFormat?: 'quickwin-accordion' | 'quickwin-pullquotes';
+  displayFormat?: 'quickwin-accordion' | 'quickwin-pullquotes' | 'calendly';
+}
+
+function hasSchedulingIntent(text: string): boolean {
+  return /\b(schedul|book(ing)?|appoint|consult|meeting|call|demo|talk\s+to|speak\s+with|chat\s+with)\b/i.test(text);
 }
 
 export interface ChatState {
@@ -50,6 +54,7 @@ export function useChat(): ChatState & ChatActions {
       }));
 
       let botMessageAdded = false;
+      const showCalendly = hasSchedulingIntent(text);
 
       fetch('/api/chat', {
         method: 'POST',
@@ -76,7 +81,18 @@ export function useChat(): ChatState & ChatActions {
             for (const line of lines) {
               if (!line.startsWith('data: ')) continue;
               const data = line.slice(6).trim();
-              if (data === '[DONE]') return;
+              if (data === '[DONE]') {
+                if (showCalendly) {
+                  setState((prev) => ({
+                    ...prev,
+                    messages: [
+                      ...prev.messages,
+                      { id: uid(), role: 'bot', text: '', displayFormat: 'calendly' as const },
+                    ],
+                  }));
+                }
+                return;
+              }
 
               try {
                 const parsed = JSON.parse(data) as { text?: string; error?: string };

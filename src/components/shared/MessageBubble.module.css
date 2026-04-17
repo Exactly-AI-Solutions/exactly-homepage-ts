@@ -85,6 +85,16 @@
   font-weight: 600;
 }
 
+.calendlyBubble {
+  background: var(--gray-100);
+  border-radius: 4px 18px 18px 18px;
+  padding: 14px 18px;
+  width: min(640px, 90%);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--black);
+}
+
 .userRow {
   display: flex;
   justify-content: flex-end;
