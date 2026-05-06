@@ -66,8 +66,8 @@ export default function Drawer({ isOpen, onClose, onItemClick }: Props) {
 
           <div className={styles.footerArea}>
             <div className={styles.footerLegal}>
-              <a href="#">Privacy</a>
-              <a href="#">Terms</a>
+              <a href="/privacy-policy.pdf" target="_blank" rel="noopener">Privacy</a>
+              <a href="/terms-of-service.pdf" target="_blank" rel="noopener">Terms</a>
             </div>
             <p className={styles.footerCopy}>&copy; {new Date().getFullYear()} Exactly AI</p>
           </div>
