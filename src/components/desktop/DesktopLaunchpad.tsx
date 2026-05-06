@@ -129,8 +129,8 @@ export default function DesktopLaunchpad({ send, context: activeContext }: Props
 
         <div className={styles.footerBottom}>
           <div className={styles.footerLegal}>
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms of Service</a>
+            <a href="/privacy-policy.pdf" target="_blank" rel="noopener">Privacy Policy</a>
+            <a href="/terms-of-service.pdf" target="_blank" rel="noopener">Terms of Service</a>
           </div>
           <span className={styles.footerCopy}>&copy; {new Date().getFullYear()} Exactly AI Solutions. All rights reserved.</span>
         </div>
